@@ -1,0 +1,212 @@
+/* LandingPage.css */
+.landing-page-container {
+    font-family: 'DM Serif Text', serif;
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+}
+
+/* Lume Title */
+.landing-title {
+    margin-top: 10rem;
+    font-size: 8rem;
+    letter-spacing: 0.3rem;
+    animation: fadeIn 1.2s ease-in forwards;
+    opacity: 0;
+}
+
+/* Lume fade in */
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+.button-row {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.5rem;
+    gap: 20px;
+    animation: fadeInBtn 3.5s ease-in forwards;
+    opacity: 0;
+    letter-spacing: 0.1rem;
+}
+
+/* Lume fade in */
+@keyframes fadeInBtn {
+    to {
+        opacity: 1;
+    }
+}
+
+/* Left Column */
+.landing-page-left-column {
+    flex: 5;
+    padding: 20px;
+    box-sizing: border-box;
+    background: linear-gradient(to bottom right, #f0f0f0, #e0e0e0);
+}
+
+/* Right Column */
+.landing-page-right-column {
+    flex: 3;
+    padding: 10px;
+    box-sizing: border-box;
+    background: #f0f0f0;
+}
+
+/* Container for the right column */
+.landing-page-right-column {
+    flex: 3;
+    padding: 0;
+    overflow: hidden; 
+    position: relative;
+}
+
+/* Landing image */
+.right-column-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    opacity: 0;
+    animation: fadeInImage 1.5s ease-in-out forwards;
+}
+
+/* Image fade-in */
+@keyframes fadeInImage {
+    to {
+        opacity: 1;
+    }
+}
+
+/* LARGE SCREENS: Desktops (1200px and up) */
+@media (min-width: 1200px) {
+    .landing-page-container {
+        flex-direction: row;
+    }
+}
+
+/* MEDIUM SCREENS: Tablets (768px to 1199px) */
+@media (max-width: 1199px) and (min-width: 768px) {
+    .landing-page-container {
+        flex-direction: column;
+    }
+
+    .landing-page-left-column,
+    .landing-page-right-column {
+        flex: none;
+        width: 100%;
+        height: 50vh;
+    }
+
+    .landing-title {
+        font-size: 4rem;
+    }
+}
+
+/* SMALL SCREENS: Phones (below 768px) */
+@media (max-width: 767px) {
+    .landing-page-container {
+        flex-direction: column;
+    }
+
+    .landing-page-left-column,
+    .landing-page-right-column {
+        flex: none;
+        width: 100%;
+        height: auto;
+    }
+
+    .landing-title {
+        font-size: 3rem;
+        margin: -0.5rem;
+    }
+
+    .button-row {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .landing-button {
+        width: 80%;
+    }
+}
+
+/* Navbar */
+.navbar {
+    font-family: 'DM Serif Text', serif;
+    width: 100vw;
+    background-color: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10;
+}
+/* Navbar */
+.footer {
+    font-family: 'DM Serif Text', serif;
+    width: 100vw;
+    height: auto;
+    background-color: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    bottom: 0;
+    left: 0;
+}
+
+
+/* OOTD Container */
+.ootd-container {
+    font-family: 'DM Serif Text', serif;
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+}
+
+/* OOTD Title */
+.ootd-title {
+    margin-top: 5rem;
+    font-size: 5rem;
+    letter-spacing: 0.3rem;
+    animation: fadeIn 1.2s ease-in forwards;
+    opacity: 0;
+}
+/* OOTD Post Column */
+.ootd-column {
+    flex: 5;
+    box-sizing: border-box;
+    background: linear-gradient(to bottom right, #f0f0f0, #e0e0e0);
+}
+
+/* OOTD Post Column */
+.post-column {
+    width: 100%;
+    max-width: 800px;
+    height: auto;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fdf6ec;
+}
+
+.ootd-post-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    padding: 20px;
+}
+
+.ootd-post-card {
+    width: 300px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.ootd-post-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
