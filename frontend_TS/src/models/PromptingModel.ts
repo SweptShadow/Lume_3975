@@ -1,7 +1,7 @@
 //! This file defines properties 
-import { SimilarItem } from './ApiResponseModel';
-import { StyleAnalysis as StyleAnalysisType } from './ApiResponseModel';
-import { AIResponse} from './ApiResponseModel';
+import { SimilarItem } from '../models/ApiResponseModel';
+import { StyleAnalysis as StyleAnalysisType } from '../models/ApiResponseModel';
+import { AIResponse} from '../models/ApiResponseModel';
 
 
 //This model defines display properties for the image preview and delete functionality.
