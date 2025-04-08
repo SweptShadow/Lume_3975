@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\api\ItemController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\HMController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -65,7 +66,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/hm-products', [HMController::class, 'fetchProducts']);
     // Route::post('/gpt-recommendations', [GPTController::class, 'generateRecommendations']);
-    Route::post('/azure-image-analysis', [AzureImageController::class, 'analyzeImage']);
+    // Route::post('/azure-image-analysis', [AzureImageController::class, 'analyzeImage']);
 });
 
 require __DIR__.'/auth.php';

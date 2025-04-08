@@ -4,17 +4,17 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\HMService;
-use App\Services\AzureAIService;
+use App\Services\LykdatService;
 
 class FashionAnalysisController extends Controller
 {
     protected $hmService;
-    protected $azureService;
+    protected $lykdatService;
 
-    public function __construct(HMService $hmService, AzureAIService $azureService)
+    public function __construct(HMService $hmService, LykdatService $lykdatService)
     {
         $this->hmService = $hmService;
-        $this->azureService = $azureService;
+        $this->lykdatService = $lykdatService;
     }
 
     public function analyze(Request $request)
@@ -34,8 +34,8 @@ class FashionAnalysisController extends Controller
 
             $prompt = $request->input('prompt');
             
-            // Get analysis from Azure AI
-            $analysisResult = $this->azureService->analyzeImage($image, $prompt);
+            // Get analysis from Lykdat API
+            $analysisResult = $this->lykdatService->analyzeImage($image, $prompt);
             
             // Based on analysis, determine if we should return similar items or style analysis
             if (isset($analysisResult['itemType'])) {
