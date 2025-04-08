@@ -99,7 +99,7 @@ const FashionAnalyzer = () => {
             //Calling API to analyze the image and get results. (Implemented in ApiService.ts)
             const response = await analyzeFashionImage(selectedFile, prompt);
             
-            //Checking if the response was successful.
+            //Checking if the response was successful(Boolean).
             if (response.success) {
                 setResults(response.data);
 
@@ -118,6 +118,8 @@ const FashionAnalyzer = () => {
         setIsLoading(false);
         }
     };
+
+
 
 
     //Scrolling to results when available.
@@ -162,18 +164,18 @@ const FashionAnalyzer = () => {
                     ) : (
                     <ImageUploader onImageSelect={handleImageSelect} />
                 )}
-                
                     
-    
                  {/* Prompt input field and submit button */}
                 <div className="fai-prompt-container">
                     <input 
                         type="text" 
                         className="fai-prompt-input" 
-                        placeholder="Ask something about this fashion item (e.g., 'Where can I buy this?' or 'Suggest styling ideas')"
+                        placeholder="Ask about fashion (e.g., 'Where can I buy this?' or 'Suggest styling ideas')"
                         value={prompt}
                         onChange={handlePromptChange}
                     />
+                </div>
+                <div className="fai-button-container">
                     <button className="fai-button" onClick={handleSubmit} disabled={!canSubmit}> Generate Suggestions </button>
                 </div>
 
