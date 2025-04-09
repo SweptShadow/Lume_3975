@@ -1,26 +1,14 @@
-import { Link } from "react-router-dom";
-
-
-//! Might want to add our name?
 const Footer = () =>
 {
     return (
-        <footer className="footer bg-white shadow-sm mt-auto">
-            <div className="container-fluid py-4">
-                <div className="row text-center">
-                    <div className="col">
-                        <p className="mb-0">© 2023 lumé. All rights reserved.</p>
-                    </div>
-                </div>
-                <div className="row text-center mt-2">
-                    <div className="col">
-                        <Link to="#" className="text-decoration-none">Privacy Policy</Link> |
-                        <Link to="#" className="text-decoration-none"> Terms of Service</Link>
-                    </div>
+        <footer className="footer">
+            <div className="footer-inner">
+                <p className="mb-0">© 2025 lumé</p>
+                <div className="footer-links">
+                    Brian Diep A00959233 | Yujin Jeong | Dilraj Bains | Evan Vink
                 </div>
             </div>
         </footer>
     );
 };
-
 export default Footer;

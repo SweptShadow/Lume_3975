@@ -1,9 +1,9 @@
 import { OOTDPost } from "../models/OOTDPost";
-import {API_BASE_URL} from "../config/index";
+import { API_BASE_URL } from "../config/index";
 
 export const OOTDService = {
     /**
-     * Fetch all OOTD posts from the backend.
+     * Fetches all OOTD posts from the backend.
      * 
      * @returns A list of OOTD posts.
      */
@@ -11,16 +11,26 @@ export const OOTDService = {
     {
         try
         {
-            const response = await fetch(`${API_BASE_URL}/ootd`);
+            // Calls: http://127.0.0.1:8000/api/articles
+            const response = await fetch(`${ API_BASE_URL }/articles`);
             if (!response.ok)
             {
-                throw new Error(`Failed to fetch OOTD posts: ${ response.status }`);
+                throw new Error(`(OOTDService.ts)Failed to fetch OOTD posts: ${ response.status }`);
             }
             return await response.json();
-        } catch (error)
+        }
+        catch (error)
         {
-            console.error("Error fetching OOTD posts:", error);
+            console.error("(OOTDService.ts)Error fetching OOTD posts:", error);
             return [];
         }
+    },
+
+    // This method fetches posts by ID
+    async getPostById (id: number): Promise<OOTDPost | null>
+    {
+        const posts = await this.getAllPosts();
+        return posts.find((post) => post.id === id) || null;
     }
 };
+
