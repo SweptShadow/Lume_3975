@@ -16,6 +16,13 @@ return new class extends Migration
             $table->text('content');
             $table->timestamps();
         });
+
+        Schema::table('ai_recommendations', function (Blueprint $table) {
+            // Add content column if it doesn't exist
+            if (!Schema::hasColumn('ai_recommendations', 'content')) {
+                $table->text('content')->nullable();
+            }
+        });
     }
 
     /**
@@ -24,5 +31,9 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('ai_recommendations');
+
+        Schema::table('ai_recommendations', function (Blueprint $table) {
+            $table->dropColumn('content');
+        });
     }
 };

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { API_BASE_URL, API_ENDPOINTS } from '../../config';
+import { API_BASE_URL } from '../../config';
 import './AIRecommendationPanel.css';
 
 const AIRecommendationPanel: React.FC = () => {
@@ -41,25 +41,38 @@ const AIRecommendationPanel: React.FC = () => {
     setError(null);
     
     try {
-      // Convert file to base64 for direct sending to GitHub AI API
+      // First check if the API is accessible at all - this is just a diagnostic step
+      try {
+        const testResponse = await fetch(`${API_BASE_URL}/api/test`);
+        console.log('Test API response:', testResponse.status, await testResponse.text());
+      } catch (err) {
+        console.error('API test failed:', err);
+      }
+      
+      // Convert file to base64 for sending to API
       const reader = new FileReader();
       reader.readAsDataURL(selectedFile);
       
       reader.onload = async () => {
         try {
-          // Get base64 string without the data:image/jpeg;base64, prefix
+          // Get base64 string without the prefix
           const base64String = (reader.result as string).split(',')[1];
           
-          const formData = new FormData();
-          formData.append('image_base64', base64String);
-          formData.append('prompt', 'Can you recommend clothing with similar style?');
+          // Create a simple JSON payload instead of FormData
+          const payload = JSON.stringify({
+            image_base64: base64String,
+            prompt: 'Can you recommend clothing with similar style?'
+          });
           
-          // Using API_ENDPOINTS here instead of hardcoded path
-          console.log('Sending request to:', `${API_BASE_URL}${API_ENDPOINTS.AI_RECOMMENDATIONS}`);
+          console.log('Sending request to:', `${API_BASE_URL}/api/ai-recommend`);
           
-          const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.AI_RECOMMENDATIONS}`, {
+          const response = await fetch(`${API_BASE_URL}/api/ai-recommend`, {
             method: 'POST',
-            body: formData,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            },
+            body: payload,
           });
           
           console.log('Response status:', response.status);
@@ -78,6 +91,7 @@ const AIRecommendationPanel: React.FC = () => {
             window.location.href = `${API_BASE_URL}/ai-recommendation/${data.recommendation_id}`;
           } else {
             setError(data.error || 'Failed to get recommendations');
+            setIsLoading(false);
           }
         } catch (err) {
           console.error('Request error:', err);

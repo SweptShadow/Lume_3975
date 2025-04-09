@@ -12,7 +12,8 @@ class AIRecommendationController extends Controller
     
     public function __construct(GithubAIService $githubAIService)
     {
-        $this->githubAIService = $githubAIService;
+        // Handle the case where the service might not be registered yet
+        $this->githubAIService = $githubAIService ?: new GithubAIService();
     }
     
     /**
@@ -20,36 +21,12 @@ class AIRecommendationController extends Controller
      */
     public function getRecommendations(Request $request)
     {
-        // Log that the request has been received
-        Log::info('AI recommendation request received');
-        
-        // Validate the request
-        $request->validate([
-            'image_base64' => 'required|string',
+        // Add simple response for testing
+        return response()->json([
+            'success' => true,
+            'recommendation_id' => 1,
+            'message' => 'Test recommendation'
         ]);
-        
-        try {
-            // Get the base64 image data
-            $imageBase64 = $request->input('image_base64');
-            
-            Log::info('Image base64 data received (length): ' . strlen($imageBase64));
-            
-            // Get recommendations
-            $response = $this->githubAIService->getRecommendations($imageBase64);
-            
-            Log::info('AI recommendation response: ', [
-                'success' => $response['success'],
-                'recommendation_id' => $response['recommendation_id'] ?? null,
-            ]);
-            
-            return response()->json($response);
-        } catch (\Exception $e) {
-            Log::error('Error getting AI recommendations: ' . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'error' => 'Error getting recommendations: ' . $e->getMessage()
-            ], 500);
-        }
     }
     
     public function getRecommendationById($id)
