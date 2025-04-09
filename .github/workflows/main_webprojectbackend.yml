@@ -1,12 +1,15 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy PHP app to Azure Web App - WebProjectBackEnd
+name: Build and deploy Laravel Backend to Azure Web App - WebProjectBackEnd
 
 on:
   push:
     branches:
       - main
+    paths:
+      - 'backend_Laravel/**'
+      - '.github/workflows/main_webprojectbackend.yml'
   workflow_dispatch:
 
 jobs:
@@ -21,20 +24,29 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.4'
+          php-version: '8.2'
+          extensions: mbstring, dom, fileinfo, sqlite3, pdo_sqlite
+          tools: composer:v2
 
-      - name: Check if composer.json exists
-        id: check_files
-        uses: andstor/file-existence-action@v1
-        with:
-          files: 'composer.json'
-
-      - name: Run composer install if composer.json exists
-        if: steps.check_files.outputs.files_exists == 'true'
-        run: composer validate --no-check-publish && composer install --prefer-dist --no-progress
+      - name: Set up backend directory
+        run: |
+          cd backend_Laravel
+          composer install --no-dev --optimize-autoloader
+          touch database/database.sqlite
+          cp .env.example .env
+          echo "APP_URL=https://webprojectbackend.azurewebsites.net" >> .env
+          echo "APP_ENV=production" >> .env
+          echo "APP_DEBUG=false" >> .env
+          echo "DB_CONNECTION=sqlite" >> .env
+          echo "DB_DATABASE=/home/site/wwwroot/database/database.sqlite" >> .env
+          # Add GitHub AI API key from secret
+          echo "GITHUB_AI_KEY=${{ secrets.GITHUB_AI_KEY }}" >> .env
+          php artisan key:generate --force
 
       - name: Zip artifact for deployment
-        run: zip release.zip ./* -r
+        run: |
+          cd backend_Laravel
+          zip -r ../release.zip ./*
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -75,4 +87,16 @@ jobs:
           app-name: 'WebProjectBackEnd'
           slot-name: 'Production'
           package: .
-          
+
+      - name: 'Run post-deployment commands'
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'WebProjectBackEnd'
+          slot-name: 'Production'
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_BACKEND }}
+          startup-command: |
+            cd /home/site/wwwroot
+            php artisan migrate --force
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
