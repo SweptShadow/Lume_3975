@@ -11,18 +11,17 @@
             <h1 class="brand-title">lumé</h1>
             <p class="page-subtitle">Create a new post</p>
             
-            @if(session('success'))
-                <div class="alert alert-success">
-                    {{ session('success') }}
-                </div>
-            @endif
+
             
+
             <div class="form-container">
-                {{-- <form method="POST" action="{{ route('') }}" enctype="multipart/form-data" class="post-form"> --}}
+                <form method="POST" action="{{ route('posts_store') }}" enctype="multipart/form-data" class="post-form">
                     @csrf
                     
 
                     <div class="form-left">
+
+
                         <div class="form-group">
                             <label for="username">Username</label>
                             <input id="username" type="text" class="form-control @error('username') is-invalid @enderror" name="username" value="{{ old('username') }}" required autofocus>
@@ -32,6 +31,7 @@
                                 </span>
                             @enderror
                         </div>
+            
 
 
                         <div class="form-group">
@@ -43,6 +43,7 @@
                                 </span>
                             @enderror
                         </div>
+            
 
 
                         <div class="form-group">
@@ -54,8 +55,12 @@
                                 </span>
                             @enderror
                         </div>
+
+                    
                     </div>
                     
+
+
 
                     <div class="form-right">
                         <div class="form-group">
@@ -65,11 +70,9 @@
                                 <span class="image-placeholder">Select an image to preview</span>
                             </div>
                             
-
                             <input type="file" id="image" name="image" class="custom-file-input @error('image') is-invalid @enderror" accept="image/*" required>
                             <label for="image" class="custom-file-label">Choose Image</label>
                             
-
                             @error('image')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -79,15 +82,18 @@
                     </div>
                     
 
+
                     <div class="btn-container">
                         <button type="submit" class="btn">Create Post</button>
                     </div>
+
+
                 </form>
             </div>
         </div>
     </div>
 
-    
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const imageInput = document.getElementById('image');

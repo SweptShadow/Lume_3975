@@ -4,8 +4,9 @@
 export interface OOTDPost
 {
     id: number;
+    username: string;
     title: string;
-    img: string; // Is this supposed to be a string? 
     description: string;
+    img: string;
     likes: number;
 }

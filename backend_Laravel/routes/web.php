@@ -37,17 +37,36 @@ Route::get('/signup', function () {
     return view('common/login_signup');
 })->name('signup');
 
-// Brian added
-Route::get('/articles', [ArticleController::class, 'index']);
-//! Route for creating post page
+
+//! Route for creating post page functionality for posting as well.
 Route::get('/createPost', function () {
     return view('common/createPost');
 })->name('createPost');
+Route::get('/posts/create', [ArticleController::class, 'create'])->name('post_create');
+Route::post('/posts', [ArticleController::class, 'store'])->name('posts_store');
+
+
+//! Route for sending post data to react
+Route::prefix('ootd')->group(function () {
+    Route::get('/posts', [ArticleController::class, 'index']);
+    Route::get('/post/{id}', [ArticleController::class, 'show']);
+    Route::post('/posts', [ArticleController::class, 'store']);
+    Route::post('/post/{id}/like', [ArticleController::class, 'like']);
+});
+
 
 //! Route for pending page
 Route::get('/pending', function () {
     return view('common/pendingPage');
 })->name('pending');
+
+
+// Brian added
+Route::get('/articles', [ArticleController::class, 'index']);
+
+
+
+
 
 //! Commented out cuz it's causing
 // Placeholder image route for development
