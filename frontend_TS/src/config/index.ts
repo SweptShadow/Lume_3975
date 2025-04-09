@@ -1,7 +1,7 @@
 //! This file is for configuration for backend API
 
 //Base URL for Laravel backend (handles both DB and AI requests)
-export const API_BASE_URL = "http://127.0.0.1:8000";
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000";
 
 //API endpoints
 export const API_ENDPOINTS = {
