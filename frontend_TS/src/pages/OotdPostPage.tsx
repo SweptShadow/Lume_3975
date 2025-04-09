@@ -7,18 +7,14 @@ import { OOTDPost } from "../models/OOTDPost";
  * This renders an individual post by id.
  * e.g. /ootd/1, /ootd/2
  */
-const OOTDPostPage = () =>
-{
+const OOTDPostPage = () => {
     const { id } = useParams();
     const [ post, setPost ] = useState<OOTDPost | null>(null);
     const [ loading, setLoading ] = useState(true);
 
-    useEffect(() =>
-    {
-        const fetchPost = async () =>
-        {
-            if (id)
-            {
+    useEffect(() => {
+        const fetchPost = async () => {
+            if (id) {
                 const result = await OOTDService.getPostById(Number(id));
                 setPost(result);
             }

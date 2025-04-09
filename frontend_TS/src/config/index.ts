@@ -5,14 +5,15 @@ export const API_BASE_URL = "http://127.0.0.1:8000";
 
 //API endpoints
 export const API_ENDPOINTS = {
-
     // OOTD endpoints (From DB)
     OOTD_POSTS: '/ootd/posts',  
     OOTD_POST_DETAIL: '/ootd/post',
     
-
     //AI Fashion endpoints (From AI)
     FASHION_ANALYSIS: '/api/analyze',
+    
+    //GPT-4o AI recommendations endpoint
+    AI_RECOMMENDATIONS: '/api/ai-recommend',
 };
 
 //Limits uploaded files for sending image to Ai.
