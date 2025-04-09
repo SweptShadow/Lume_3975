@@ -31,6 +31,27 @@ export const OOTDService = {
     {
         const posts = await this.getAllPosts();
         return posts.find((post) => post.id === id) || null;
+    },
+
+    /**
+     * Getting Image URL for a post.
+     * 
+     * @param imageRelativePath - The relative path of the image.
+     * @returns The full URL of the image.
+     */
+    getImageUrl: (imageRelativePath: string): string => {
+
+        // If the path already includes http/https, return as is
+        if (imageRelativePath.startsWith('http')) {
+            return imageRelativePath;
+        }
+        
+
+        const cleanPath = imageRelativePath.startsWith('/') 
+            ? imageRelativePath.substring(1) 
+            : imageRelativePath;
+            
+        return `${API_BASE_URL}/${cleanPath}`;
     }
 };
 

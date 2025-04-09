@@ -69,10 +69,16 @@ const OOTDPostList = () =>
                     <Link to={ `/ootd/${ post.id }` } style={ { textDecoration: "none", color: "inherit" } }>
                         <h3>{ post.title }</h3>
                         <img
-                            src="/images/mockimage.jpeg"
-                            className="card-img-top img-fluid"
-                            alt="OOTD"
-                        />
+                                src={OOTDService.getImageUrl(post.img)}
+                                className="card-img-top img-fluid"
+                                alt={post.title}
+                                onError={(e) => {
+                                    // Fallback if image fails to load
+                                    const target = e.target as HTMLImageElement;
+                                    target.src = "/images/image-placeholder.jpg";
+                                    target.alt = "Image not available";
+                                }}
+                            />
                     </Link>
                     {/* Clickable title and image END */ }
 

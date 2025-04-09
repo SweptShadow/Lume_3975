@@ -34,7 +34,7 @@ const OOTDPostPage = () =>
         <div className="ootd-post-page">
             <h2>{ post.title }</h2>
             {/* Currently using a mock image */}
-            <img src="/images/mockimage.jpeg" alt="OOTD" className="img-fluid" /> 
+            <img src="" alt="OOTD" className="img-fluid" /> 
              {/* { post.img } This should be  */}
         </div>
     );
