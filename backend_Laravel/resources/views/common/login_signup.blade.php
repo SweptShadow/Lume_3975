@@ -16,8 +16,14 @@
 
                 <h1 class="brand-title">lumé</h1>
                 
-                <!-- Need to fix the route -->
-                {{-- <form method="POST" action="{{ route('welcome') }}" class="auth-form"> --}}
+                @if(session('success'))
+                    <div class="alert alert-success">
+                        {{ session('success') }}
+                    </div>
+                @endif
+
+
+                <form method="POST" action="{{ route('welcome') }}" class="auth-form">
                     @csrf
                     <div class="form-group">
                         <label for="email">Email</label>
@@ -44,7 +50,7 @@
                             Already have an account? Sign up
                         </a>
                     </div>
-                {{-- </form> --}}
+                </form>
             </div>
         </div>
 
@@ -74,19 +80,19 @@
                 
 
                 <!-- Need to fix the route -->
-                {{-- <form method="POST" action="{{ route('welcome') }}" class="auth-form"> --}}
+                <form method="POST" action="{{ route('signup.submit') }}" class="auth-form">
                     @csrf
 
                     <div class="form-group">
-                        <label for="name">Name</label>
-                        <input id="name" type="text" class="form-control" name="name" required autofocus>
+                        <label for="username">Username</label>
+                        <input id="username" type="text" class="form-control" name="username" required autofocus>
                     </div>
-
+                    
                     <div class="form-group">
                         <label for="register-email">Email</label>
                         <input id="register-email" type="email" class="form-control" name="email" required>
                     </div>
-
+                    
                     <div class="form-group">
                         <label for="register-password">Password</label>
                         <input id="register-password" type="password" class="form-control" name="password" required>
@@ -107,7 +113,7 @@
                             Already have an account? Log in
                         </a>
                     </div>
-                {{-- </form> --}}
+                </form>
 
 
             </div>

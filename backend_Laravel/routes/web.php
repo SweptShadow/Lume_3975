@@ -5,6 +5,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\HMController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\ArticleController;
+use App\Http\Controllers\api\AdminController;
+use App\Http\Controllers\api\UsersController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,6 +38,9 @@ Route::get('/login', function () {
 Route::get('/signup', function () {
     return view('common/login_signup');
 })->name('signup');
+Route::post('/login', [UsersController::class, 'login'])->name('login.submit');
+Route::post('/signup', [UsersController::class, 'register'])->name('signup.submit');
+Route::get('/logout', [UsersController::class, 'logout'])->name('logout');
 
 
 //! Route for creating post page functionality for posting as well.
@@ -53,6 +58,7 @@ Route::prefix('ootd')->group(function () {
     Route::post('/posts', [ArticleController::class, 'store']);
     Route::post('/post/{id}/like', [ArticleController::class, 'like']);
 });
+Route::get('/articles', [ArticleController::class, 'index']);
 
 
 //! Route for pending page
@@ -61,14 +67,22 @@ Route::get('/pending', function () {
 })->name('pending');
 
 
-// Brian added
-Route::get('/articles', [ArticleController::class, 'index']);
+//! Route for admin page
+Route::get('/admin/users', [AdminController::class, 'userManagement'])->name('admin_users');
+Route::patch('/admin/users/{id}/toggle-approval', [AdminController::class, 'toggleApproval'])
+    ->name('admin.users.toggle-approval');
+
+
+Route::get('/profile', function () {
+    return view('user/profile');
+})->name('profile');
 
 
 
 
+//! Commented out cuz it's causing error
 
-//! Commented out cuz it's causing
+
 // Placeholder image route for development
 // Route::get('/api/placeholder/{width}/{height}', function ($width, $height) {
 //     $img = imagecreatetruecolor($width, $height);
