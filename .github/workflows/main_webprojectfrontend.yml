@@ -7,10 +7,7 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'frontend_TS/**'
-      - '.github/workflows/main_webprojectfrontend.yml'
-  workflow_dispatch:
+  workflow_dispatch:  # Keep this to allow manual triggering
 
 jobs:
   build:

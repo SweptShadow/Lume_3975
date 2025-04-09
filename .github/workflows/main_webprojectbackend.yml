@@ -33,16 +33,24 @@ jobs:
           cd backend_Laravel
           composer install --no-dev --optimize-autoloader
           touch database/database.sqlite
-          cp .env.example .env
-          echo "APP_URL=https://webprojectbackend.azurewebsites.net" >> .env
-          echo "APP_ENV=production" >> .env
-          echo "APP_DEBUG=false" >> .env
-          echo "DB_CONNECTION=sqlite" >> .env
-          echo "DB_DATABASE=/home/site/wwwroot/database/database.sqlite" >> .env
-          # Add CORS allowed origins
-          echo "CORS_ALLOWED_ORIGINS=https://webprojectfrontend.azurewebsites.net" >> .env
-          # Add GitHub AI API key from secret
-          echo "GITHUB_AI_KEY=${{ secrets.GITHUB_AI_KEY }}" >> .env
+          # Create .env file directly instead of copying from .env.example
+          cat > .env << 'EOL'
+          APP_NAME=Lume
+          APP_ENV=production
+          APP_DEBUG=false
+          APP_URL=https://webprojectbackend.azurewebsites.net
+          DB_CONNECTION=sqlite
+          DB_DATABASE=/home/site/wwwroot/database/database.sqlite
+          LOG_CHANNEL=stack
+          BROADCAST_DRIVER=log
+          CACHE_DRIVER=file
+          FILESYSTEM_DISK=local
+          QUEUE_CONNECTION=sync
+          SESSION_DRIVER=file
+          SESSION_LIFETIME=120
+          GITHUB_AI_KEY=${{ secrets.GITHUB_AI_KEY }}
+          CORS_ALLOWED_ORIGINS=https://webprojectfrontend.azurewebsites.net
+          EOL
           php artisan key:generate --force
 
       - name: Zip artifact for deployment
