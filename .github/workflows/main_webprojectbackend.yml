@@ -100,7 +100,7 @@ jobs:
 
       - name: 'Run Laravel post-deployment commands'
         run: |
-          az webapp ssh --name YOUR_APP_NAME --resource-group YOUR_RESOURCE_GROUP --timeout 60 --port 2222 << EOF
+          az webapp ssh --name WebProjectBackEnd --resource-group Web_Project --timeout 60 --port 2222 << EOF
           cd /home/site/wwwroot
           php artisan migrate --force
           php artisan config:cache
