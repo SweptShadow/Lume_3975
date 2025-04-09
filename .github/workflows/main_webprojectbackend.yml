@@ -100,21 +100,10 @@ jobs:
           package: .
 
       - name: 'Run Laravel post-deployment commands'
-        uses: azure/cli@v1
-        with:
-          inlineScript: |
-            # Create the database directory if it doesn't exist
-            az webapp ssh --resource-group Web_Project --name WebProjectBackEnd --command "mkdir -p /home/site/wwwroot/database"
-            
-            # Create the SQLite database file if it doesn't exist
-            az webapp ssh --resource-group Web_Project --name WebProjectBackEnd --command "touch /home/site/wwwroot/database/database.sqlite"
-            
-            # Set correct permissions
-            az webapp ssh --resource-group Web_Project --name WebProjectBackEnd --command "chmod -R 775 /home/site/wwwroot/storage"
-            az webapp ssh --resource-group Web_Project --name WebProjectBackEnd --command "chmod -R 775 /home/site/wwwroot/database"
-            
-            # Run Laravel commands
-            az webapp ssh --resource-group Web_Project --name WebProjectBackEnd --command "cd /home/site/wwwroot && php artisan migrate --force || echo 'Migration failed but continuing'"
-            az webapp ssh --resource-group Web_Project --name WebProjectBackEnd --command "cd /home/site/wwwroot && php artisan config:cache"
-            az webapp ssh --resource-group Web_Project --name WebProjectBackEnd --command "cd /home/site/wwwroot && php artisan route:cache"
-            az webapp ssh --resource-group Web_Project --name WebProjectBackEnd --command "cd /home/site/wwwroot && php artisan view:cache"
+        run: |
+          az webapp ssh --name WebProjectBackEnd --resource-group Web_Project --timeout 60 --port 2222 << EOF
+          cd /home/site/wwwroot
+          php artisan migrate --force
+          php artisan config:cache
+          php artisan route:cache
+          EOF

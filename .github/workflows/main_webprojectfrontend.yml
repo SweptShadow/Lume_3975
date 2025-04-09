@@ -10,6 +10,7 @@ on:
     paths:
       - 'frontend_TS/**'
       - '.github/workflows/main_webprojectfrontend.yml'
+      
   workflow_dispatch:  # Keep this to allow manual triggering
 
 jobs:
