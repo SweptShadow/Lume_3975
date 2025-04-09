@@ -4,6 +4,7 @@ use App\Http\Controllers\api\ItemController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\HMController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\api\ArticleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,7 +37,8 @@ Route::get('/signup', function () {
     return view('common/login_signup');
 })->name('signup');
 
-
+// Brian added
+Route::get('/articles', [ArticleController::class, 'index']);
 
 //! Commented out cuz it's causing
 // Placeholder image route for development
