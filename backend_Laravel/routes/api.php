@@ -12,4 +12,3 @@ Route::get('/hm/new-arrivals', [HMController::class, 'newArrivals']);
 
 // Fashion Analysis API Route - matches '/api/analyze' endpoint expected by frontend
 Route::post('/analyze', [FashionAnalysisController::class, 'analyze']);
-

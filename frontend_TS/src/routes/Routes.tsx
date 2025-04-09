@@ -30,7 +30,7 @@ export const router = createBrowserRouter([
       {
         path: "/discover",
         element: <DiscoverPage />
-      }
+      },
     ],
   },
 ]);
