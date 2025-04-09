@@ -7,6 +7,9 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'frontend_TS/**'
+      - '.github/workflows/main_webprojectfrontend.yml'
   workflow_dispatch:  # Keep this to allow manual triggering
 
 jobs:
@@ -21,7 +24,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '20'
 
       - name: Build frontend
         run: |

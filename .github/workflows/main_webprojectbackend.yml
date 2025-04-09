@@ -9,7 +9,7 @@ on:
       - main
     paths:
       - 'backend_Laravel/**'
-      - '.github/workflows/main_webprojectbackend.yml'
+      - '.github/workflows/main_webprojectbackend.yml' 
   workflow_dispatch:
 
 jobs:
@@ -32,11 +32,13 @@ jobs:
         run: |
           cd backend_Laravel
           composer install --no-dev --optimize-autoloader
-          touch database.db
+          mkdir -p database
+          touch database/database.sqlite
           # Create .env file directly instead of copying from .env.example
           cat > .env << 'EOL'
           APP_NAME=Lume
           APP_ENV=production
+          APP_KEY=base64:IGtdSyUcU/95yJuLbsVO0FxpBddKAZSBknBkENVKI+g=
           APP_DEBUG=false
           APP_URL=https://webprojectbackend.azurewebsites.net
           DB_CONNECTION=sqlite
@@ -48,10 +50,9 @@ jobs:
           QUEUE_CONNECTION=sync
           SESSION_DRIVER=file
           SESSION_LIFETIME=120
-          GITHUB_AI_KEY=${{ secrets.GITHUB_AI_KEY }}
+          GITHUB_AI_KEY=${{ secrets.AI_API_KEY }}
           CORS_ALLOWED_ORIGINS=https://webprojectfrontend.azurewebsites.net
           EOL
-          php artisan key:generate --force
 
       - name: Zip artifact for deployment
         run: |
@@ -102,4 +103,18 @@ jobs:
         uses: azure/cli@v1
         with:
           inlineScript: |
-            az webapp ssh --resource-group Web_Project --name WebProjectBackEnd --command "cd /home/site/wwwroot && php artisan migrate --force && php artisan config:cache && php artisan route:cache"
+            # Create the database directory if it doesn't exist
+            az webapp ssh --resource-group Web_Project --name WebProjectBackEnd --command "mkdir -p /home/site/wwwroot/database"
+            
+            # Create the SQLite database file if it doesn't exist
+            az webapp ssh --resource-group Web_Project --name WebProjectBackEnd --command "touch /home/site/wwwroot/database/database.sqlite"
+            
+            # Set correct permissions
+            az webapp ssh --resource-group Web_Project --name WebProjectBackEnd --command "chmod -R 775 /home/site/wwwroot/storage"
+            az webapp ssh --resource-group Web_Project --name WebProjectBackEnd --command "chmod -R 775 /home/site/wwwroot/database"
+            
+            # Run Laravel commands
+            az webapp ssh --resource-group Web_Project --name WebProjectBackEnd --command "cd /home/site/wwwroot && php artisan migrate --force || echo 'Migration failed but continuing'"
+            az webapp ssh --resource-group Web_Project --name WebProjectBackEnd --command "cd /home/site/wwwroot && php artisan config:cache"
+            az webapp ssh --resource-group Web_Project --name WebProjectBackEnd --command "cd /home/site/wwwroot && php artisan route:cache"
+            az webapp ssh --resource-group Web_Project --name WebProjectBackEnd --command "cd /home/site/wwwroot && php artisan view:cache"
