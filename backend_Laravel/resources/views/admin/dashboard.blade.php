@@ -43,25 +43,32 @@
                             </thead>
                             <tbody>
 
-
                                 @foreach($users as $user)
-                                <tr>
-                                    <td>{{ $user->id }}</td>
-                                    <td>{{ $user->username }}</td>
-                                    <td>{{ $user->email }}</td>
-                                    <td>{{ ucfirst($user->Role) }}</td>
-                                    <td>
-                                        <span class="status-badge {{ $user->IsApproved ? 'status-approved' : 'status-pending' }}">
-                                            {{ $user->IsApproved ? 'Approved' : 'Pending' }}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <label class="approval-toggle">
-                                            <input type="checkbox" {{ $user->IsApproved ? 'checked' : '' }}>
-                                            <span class="toggle-slider"></span>
-                                        </label>
-                                    </td>
-                                </tr>
+                                    <tr>
+                                        <td>{{ $user->id }}</td>
+                                        <td>{{ $user->username }}</td>
+                                        <td>{{ $user->email }}</td>
+                                        <td>{{ ucfirst($user->Role) }}</td>
+
+                                        <td>
+                                            <span class="status-badge {{ $user->IsApproved ? 'status-approved' : 'status-pending' }}">
+                                                {{ $user->IsApproved ? 'Approved' : 'Pending' }}
+                                            </span>
+                                        </td>
+
+                                        <td>
+                                            <form action="{{ url('/admin/users/' . $user->id . '/toggle-approval') }}" method="POST" class="approval-form">
+                                                @csrf
+                                                @method('PATCH')
+                                                <label class="approval-toggle">
+                                                    <input type="checkbox" {{ $user->IsApproved ? 'checked' : '' }} 
+                                                        onchange="this.form.submit()">
+                                                    <span class="toggle-slider"></span>
+                                                </label>
+                                            </form>
+                                        </td>
+                                        
+                                    </tr>
                                 @endforeach
 
 

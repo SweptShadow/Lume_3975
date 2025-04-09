@@ -6,6 +6,11 @@ use App\Http\Controllers\HMController;
 use App\Http\Controllers\FashionAnalysisController;
 use App\Http\Controllers\AIRecommendationController;
 
+// Basic test endpoint that should always work
+Route::get('/test', function() {
+    return response()->json(['status' => 'API is working', 'message' => 'Connection successful']);
+});
+
 // H&M API Routes
 Route::get('/hm/search', [HMController::class, 'search']);
 Route::get('/hm/product-description', [HMController::class, 'productDescription']);

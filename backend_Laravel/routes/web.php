@@ -73,14 +73,14 @@ Route::get('/admin/users', [AdminController::class, 'userManagement'])->name('ad
 Route::patch('/admin/users/{id}/toggle-approval', [AdminController::class, 'toggleApproval'])
     ->name('admin.users.toggle-approval');
 
-
+//! Route for profile page
 Route::get('/profile', function () {
     return view('user/profile');
 })->name('profile');
 
 
 // AI Recommendation page
-Route::get('/ai-recommendation/{id}', [AIRecommendationController::class, 'show'])->name('ai-recommendation');
+Route::get('/ai-recommendation/{id}', [AIRecommendationController::class, 'show'])->name('ai.recommendation');
 
 //! Commented out cuz it's causing error
 
