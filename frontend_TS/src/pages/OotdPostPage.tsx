@@ -7,14 +7,18 @@ import { OOTDPost } from "../models/OOTDPost";
  * This renders an individual post by id.
  * e.g. /ootd/1, /ootd/2
  */
-const OOTDPostPage = () => {
+const OOTDPostPage = () =>
+{
     const { id } = useParams();
     const [ post, setPost ] = useState<OOTDPost | null>(null);
     const [ loading, setLoading ] = useState(true);
 
-    useEffect(() => {
-        const fetchPost = async () => {
-            if (id) {
+    useEffect(() =>
+    {
+        const fetchPost = async () =>
+        {
+            if (id)
+            {
                 const result = await OOTDService.getPostById(Number(id));
                 setPost(result);
             }
@@ -37,12 +41,13 @@ const OOTDPostPage = () => {
                     <div className="post-column" >
                         <div className="indie-card mb-4 mx-auto" style={ { maxWidth: '500px' } }>
                             <h1 className="ootd-indie-title text-center w-100">{ post.title }</h1>
+                            
                             <img
-                                // src={ `/storage/${ post.img }` }
-                                src="/images/mockimage.jpeg" // Mock image for now
+                                src={ `http://localhost:8000/${ post.img }` }
                                 alt={ post.title }
                                 className="ootd-indie-img img-fluid mb-1"
                             />
+
                             <p className="ootd-indie-description">{ post.description }</p>
                         </div>
                     </div>

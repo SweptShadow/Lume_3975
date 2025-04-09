@@ -13,7 +13,7 @@ const OotdPage = () =>
                 <h1 className="ootd-title text-center w-100">OOTD</h1>
                 <div className="post-column">
                     {/* OOTD Post Card */ }
-                    <div className="card mb-4 mx-auto" style={ { maxWidth: '400px', border: "solid 2px red" } }>
+                    <div className="card mb-4 mx-auto" style={ { maxWidth: '400px' } }>
                         <OOTDPostList />
                     </div>
                 </div>
