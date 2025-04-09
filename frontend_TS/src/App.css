@@ -462,17 +462,21 @@
     left: 0;
     z-index: 10;
 }
-/* Navbar */
+
+/* Footer base */
 .footer {
-    font-family: 'DM Serif Text', serif;
-    width: 100vw;
-    height: auto;
-    background-color: white;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    bottom: 0;
-    left: 0;
+  font-family: 'DM Serif Text', serif;
+  width: 100%;
+  background-color: white;
+  padding: 0.75rem 1rem;
+  color: #333;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
+/* Footer text layout */
+.footer-inner {
+  text-align: center;
+}
 
 /* OOTD Container */
 .ootd-container {
@@ -480,6 +484,7 @@
     display: flex;
     height: 100vh;
     width: 100vw;
+    overflow: hidden; /* Prevent overflow outside the container */
 }
 
 /* OOTD Title */
@@ -492,9 +497,10 @@
 }
 /* OOTD Post Column */
 .ootd-column {
-    flex: 5;
+    flex: 1; /* Take up equal space */
     box-sizing: border-box;
     background: linear-gradient(to bottom right, #f0f0f0, #e0e0e0);
+    overflow-y: auto; 
 }
 
 /* OOTD Post Column */
@@ -504,9 +510,12 @@
     height: auto;
     margin: 0 auto;
     padding: 20px;
-    background-color: #fdf6ec;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
+/* OOTD Post kist */
 .ootd-post-list {
     display: flex;
     flex-wrap: wrap;
@@ -515,6 +524,7 @@
     padding: 20px;
 }
 
+/* OOTD Post card */
 .ootd-post-card {
     width: 300px;
     border: 1px solid #ddd;
@@ -524,6 +534,7 @@
     text-align: center;
 }
 
+/* OOTD Post img */
 .ootd-post-image {
     width: 100%;
     height: 200px;

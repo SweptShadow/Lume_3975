@@ -1,7 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import LandingPage from "../pages/LandingPage";
 import OotdPage from "../pages/OotdPage";
-// import OotdPostPage from "../pages/OotdPostPage";
+import OotdPostPage from "../pages/OotdPostPage";
 import DiscoverPage from "../pages/DiscoverPage";
 import App from "../App";
 
@@ -18,13 +18,15 @@ export const router = createBrowserRouter([
         element: <LandingPage />
       },
       {
+        // The list of OOTD posts
         path: "/ootd",
         element: <OotdPage />
       },
-      // {
-      //   path: "/ootd:id",
-      //   element: <OotdPostPage />
-      // },
+      {
+        // For each individual post
+        path: "/ootd/:id",
+        element: <OotdPostPage />
+      },
       {
         path: "/discover",
         element: <DiscoverPage />
