@@ -12,9 +12,8 @@
     </head>
     <body>
     
-        {{-- uses laravels authentification to check if they are logged in, if they are: display the navbar --}}
-        {{-- @if(Auth::check()) 
-            @include('layouts.header')
+        {{-- @if(!in_array(request()->path(), ['/', 'login', 'signup', 'admin/dashboard']))
+            @include('header')
         @endif --}}
     
         <div>

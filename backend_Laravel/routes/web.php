@@ -73,7 +73,7 @@ Route::get('/admin/users', [AdminController::class, 'userManagement'])->name('ad
 Route::patch('/admin/users/{id}/toggle-approval', [AdminController::class, 'toggleApproval'])
     ->name('admin.users.toggle-approval');
 
-
+//! Route for profile page
 Route::get('/profile', function () {
     return view('user/profile');
 })->name('profile');

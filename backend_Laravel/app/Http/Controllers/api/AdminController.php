@@ -26,6 +26,6 @@ class AdminController extends Controller
     $user->IsApproved = !$user->IsApproved;
     $user->save();
 
-    return back()->with('success', 'User approval status updated.');
+    return redirect('/admin/users')->with('success', 'User approval status updated.');    
     }
 }
