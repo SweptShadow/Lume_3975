@@ -8,51 +8,90 @@ use Illuminate\Http\Request;
 
 class ArticleController extends Controller
 {
+/**
+     * Add CORS headers to a response
+     */
+    private function addCorsHeaders($response)
+    {
+        return $response
+            ->header('Access-Control-Allow-Origin', '*')
+            ->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+            ->header('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization');
+    }
+
+    /**
+     * Handle OPTIONS preflight requests
+     */
+    public function options()
+    {
+        return $this->addCorsHeaders(response('', 200));
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
         $articles = Article::all();
-        return response()->json($articles)
-            ->header('Access-Control-Allow-Origin', '*')
-            ->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-            ->header('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization');
+        return $this->addCorsHeaders(response()->json($articles));
     }
 
+    /**
+     * Like a post
+     */
     public function like($id)
     {
         $article = Article::findOrFail($id);
-
-        $article->likeds()->create();
-
         $article->increment('likes');
-
-        return response()->json(['message' => 'Liked!']);
+        
+        return $this->addCorsHeaders(
+            response()->json(['message' => 'Liked!', 'likes' => $article->likes])
+        );
     }
 
-
-
-
-
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created post in storage.
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'title' => 'required',
-            'img' => 'required',
-            'likes' => 'required',
+        // Validate the request data
+        $validated = $request->validate([
+            'username' => 'required|string',
+            'title' => 'required|string',
+            'description' => 'required|string',
+            'image' => 'required|image|max:2048',
         ]);
 
-        Article::create([
-            'id' => request('id'),
-            'title' => request('title'),
-            'img' => request('img'),
-            'description' => request('description'),
-            'likes' => request('likes'),
+        // Handle the image upload
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = time() . '_' . $image->getClientOriginalName();
+            
+            $image->move(public_path('uploads'), $imageName);
+            
+            $imagePath = 'uploads/' . $imageName;
+        } else {
+            return $this->addCorsHeaders(
+                response()->json(['error' => 'Image is required'], 422)
+            );
+        }
+
+        // Create and save the article
+        $article = Article::create([
+            'username' => $validated['username'],
+            'title' => $validated['title'],
+            'description' => $validated['description'],
+            'img' => $imagePath ?? null,
+            'likes' => 0
         ]);
+
+        // Return JSON response with CORS headers
+        return $this->addCorsHeaders(
+            response()->json([
+                'message' => 'Post created successfully!',
+                'article' => $article
+            ], 201)
+        );
     }
 
     /**
@@ -63,16 +102,14 @@ class ArticleController extends Controller
         $article = Article::find($id);
 
         if (!$article) {
-            return response()->json(['message' => 'Article not found'], 404)
-                ->header('Access-Control-Allow-Origin', '*')
-                ->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-                ->header('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization');
+            return $this->addCorsHeaders(
+                response()->json(['message' => 'Article not found'], 404)
+            );
         }
 
-        return response()->json($article)
-            ->header('Access-Control-Allow-Origin', '*')
-            ->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-            ->header('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization');
+        return $this->addCorsHeaders(
+            response()->json($article)
+        );
     }
 
     /**
