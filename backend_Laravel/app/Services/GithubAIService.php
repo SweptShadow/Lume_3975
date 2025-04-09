@@ -15,7 +15,11 @@ class GithubAIService
     {
         // Load from env or config
         $this->apiEndpoint = env('GITHUB_AI_ENDPOINT', 'https://models.inference.ai.azure.com');
+<<<<<<< HEAD
         $this->apiKey = env('GITHUB_AI_KEY', '');
+=======
+        $this->apiKey = env('GITHUB_AI_KEY');
+>>>>>>> 8fb13458bb23f9a684115ac14e856cd8f0cf39b3
     }
     
     /**
@@ -68,9 +72,21 @@ class GithubAIService
      */
     protected function callGithubAI($imageBase64)
     {
+<<<<<<< HEAD
         // Construct the correct endpoint URL - this is the key change
         $url = $this->apiEndpoint . '/chat/completions';
         
+=======
+        // Construct the correct endpoint URL
+        $url = $this->apiEndpoint . '/chat/completions';
+        
+        // Add detailed debug logging
+        Log::info('Calling GitHub AI API', [
+            'url' => $url,
+            'image_base64_length' => strlen($imageBase64),
+        ]);
+        
+>>>>>>> 8fb13458bb23f9a684115ac14e856cd8f0cf39b3
         // Create structured messages with image
         $messages = [
             [
@@ -102,7 +118,10 @@ class GithubAIService
             'top_p' => 1
         ];
         
+<<<<<<< HEAD
         Log::info('Calling GitHub AI API...');
+=======
+>>>>>>> 8fb13458bb23f9a684115ac14e856cd8f0cf39b3
         $response = Http::withHeaders([
             'Content-Type' => 'application/json',
             'Authorization' => $this->apiKey
@@ -114,7 +133,14 @@ class GithubAIService
         }
         
         $responseData = $response->json();
+<<<<<<< HEAD
         Log::info('GitHub AI API response received');
+=======
+        Log::info('GitHub AI API response received', [
+            'status' => $response->status(),
+            'has_choices' => isset($responseData['choices']),
+        ]);
+>>>>>>> 8fb13458bb23f9a684115ac14e856cd8f0cf39b3
         
         // Extract the actual message content
         if (isset($responseData['choices'][0]['message']['content'])) {

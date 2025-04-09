@@ -80,7 +80,7 @@ Route::get('/profile', function () {
 
 
 // AI Recommendation page
-Route::get('/ai-recommendation/{id}', [AIRecommendationController::class, 'show'])->name('ai-recommendation');
+Route::get('/ai-recommendation/{id}', [AIRecommendationController::class, 'show'])->name('ai.recommendation');
 
 //! Commented out cuz it's causing error
 
