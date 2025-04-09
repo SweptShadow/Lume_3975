@@ -18,10 +18,10 @@ class ArticleController extends Controller
             ->header('Access-Control-Allow-Origin', '*')
             ->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
             ->header('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization');
-    
     }
 
-    public function like($id){
+    public function like($id)
+    {
         $article = Article::findOrFail($id);
 
         $article->likeds()->create();
@@ -29,11 +29,10 @@ class ArticleController extends Controller
         $article->increment('likes');
 
         return response()->json(['message' => 'Liked!']);
-
     }
 
 
-    
+
 
 
     /**
@@ -43,14 +42,15 @@ class ArticleController extends Controller
     {
         $request->validate([
             'title' => 'required',
-            'content' => 'required',
+            'img' => 'required',
             'likes' => 'required',
         ]);
 
         Article::create([
             'id' => request('id'),
             'title' => request('title'),
-            'content' => request('content'),
+            'img' => request('img'),
+            'description' => request('description'),
             'likes' => request('likes'),
         ]);
     }
@@ -64,9 +64,9 @@ class ArticleController extends Controller
 
         if (!$article) {
             return response()->json(['message' => 'Article not found'], 404)
-            ->header('Access-Control-Allow-Origin', '*')
-            ->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-            ->header('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization');
+                ->header('Access-Control-Allow-Origin', '*')
+                ->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+                ->header('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization');
         }
 
         return response()->json($article)

@@ -4,7 +4,8 @@ import { OOTDService } from "../services/OOTDService";
 import { OOTDPost } from "../models/OOTDPost";
 
 /**
- * This renders for an individual post
+ * This renders for an individual post by id.
+ *  e.g. /ootd/1, /ootd/2
  */
 const OOTDPostPage = () =>
 {
@@ -32,8 +33,9 @@ const OOTDPostPage = () =>
     return (
         <div className="ootd-post-page">
             <h2>{ post.title }</h2>
-            <img src="/images/mockimage.jpeg" alt="OOTD" className="img-fluid" />
-            <p>{ post.content }</p>
+            {/* Currently using a mock image */}
+            <img src="/images/mockimage.jpeg" alt="OOTD" className="img-fluid" /> 
+             {/* { post.img } This should be  */}
         </div>
     );
 };

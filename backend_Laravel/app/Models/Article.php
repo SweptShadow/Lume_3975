@@ -11,7 +11,8 @@ class Article extends Model
     protected $fillable = [
         "id",
         "title",
-        "content",
+        "img",
+        "description",
         "likes"
     ];
 
@@ -19,6 +20,4 @@ class Article extends Model
     {
         return $this->hasMany(Liked::class);
     }
-
-
 }
