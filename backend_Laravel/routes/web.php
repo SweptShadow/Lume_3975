@@ -5,6 +5,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\HMController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\ArticleController;
+use App\Http\Controllers\AIRecommendationController;
 use App\Http\Controllers\api\AdminController;
 use App\Http\Controllers\api\UsersController;
 
@@ -78,7 +79,8 @@ Route::get('/profile', function () {
 })->name('profile');
 
 
-
+// AI Recommendation page
+Route::get('/ai-recommendation/{id}', [AIRecommendationController::class, 'show'])->name('ai-recommendation');
 
 //! Commented out cuz it's causing error
 
