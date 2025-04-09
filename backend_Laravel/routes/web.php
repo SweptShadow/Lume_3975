@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 //! Route for landing Page (Including react redirect routes).
 Route::get('/', function () {
     return view('welcome');
-});
+}) ->name('welcome');
 Route::get('/discover', function() {
     return redirect(config('app.react_url') . '/discover');
 }) -> name('discover');
@@ -37,6 +37,15 @@ Route::get('/signup', function () {
 })->name('signup');
 
 
+//! Route for creating post page
+Route::get('/createPost', function () {
+    return view('common/createPost');
+})->name('createPost');
+
+//! Route for pending page
+Route::get('/pending', function () {
+    return view('common/pendingPage');
+})->name('pending');
 
 //! Commented out cuz it's causing
 // Placeholder image route for development

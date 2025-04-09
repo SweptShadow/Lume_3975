@@ -100,7 +100,7 @@
                         </button>
                     </div>
 
-
+                    
 
                     <div class="form-footer">
                         <a href="{{ route('login') }}" class="btn-link" id="showLoginBtn">
@@ -117,24 +117,38 @@
     </div>
 </div>
 
+{{--  This part below is for event!!  --}}
 <script>
+
+    //Adding event listeners to the buttons
     document.addEventListener('DOMContentLoaded', function() {
         const authContainer = document.getElementById('authContainer');
         const showSignupBtn = document.getElementById('showSignupBtn');
         const showLoginBtn = document.getElementById('showLoginBtn');
         
+
+        //Checking if on signup route
         if (window.location.pathname === '/signup') {
+            
+            //Adding signup-mode class to show the signup form initially.
             authContainer.classList.add('signup-mode');
         }
         
+
+        //Adding click event listeners for the buttons.
         if (showSignupBtn) {
+
+            //Loginpage to Signuppage
             showSignupBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 authContainer.classList.add('signup-mode');
             });
         }
         
+        //Adding click event listeners for the buttons.
         if (showLoginBtn) {
+
+            //Signuppage to Loginpage
             showLoginBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 authContainer.classList.remove('signup-mode');
