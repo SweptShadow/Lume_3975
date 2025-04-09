@@ -5,6 +5,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\HMController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\ArticleController;
+use App\Http\Controllers\AIRecommendationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -65,7 +66,8 @@ Route::get('/pending', function () {
 Route::get('/articles', [ArticleController::class, 'index']);
 
 
-
+// AI Recommendation page
+Route::get('/ai-recommendation/{id}', [AIRecommendationController::class, 'show'])->name('ai-recommendation');
 
 
 //! Commented out cuz it's causing
