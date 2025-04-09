@@ -31,6 +31,11 @@ const OOTDPostPage = () =>
     if (!post) return <div>Post not found.</div>;
 
     return (
+        <div className="ootd-post-page">
+            <h2>{ post.title }</h2>
+            {/* Currently using a mock image */}
+            <img src="" alt="OOTD" className="img-fluid" /> 
+             {/* { post.img } This should be  */}
         <div className="ootd-container">
             <div className="ootd-column justify-content-center">
                 <div className="post-column" >

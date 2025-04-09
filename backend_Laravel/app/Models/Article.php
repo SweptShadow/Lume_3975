@@ -8,8 +8,11 @@ class Article extends Model
 {
     protected $table = "articles";
 
+    public $timestamps = false;
+
     protected $fillable = [
         "id",
+        "username",
         "title",
         "img",
         "description",
