@@ -549,3 +549,31 @@
     height: 200px;
     object-fit: cover;
 }
+
+/* Individual img */
+.ootd-indie-img {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* Individual title */
+.ootd-indie-title {
+  margin-top: 5rem;
+  font-size: 5rem;
+  letter-spacing: 0.3rem;
+  animation: fadeIn 1.2s ease-in forwards;
+  opacity: 0;
+}
+
+/* Individual description */
+.ootd-indie-description{
+  border: 1px solid #ccc;
+  padding: 1rem;
+  border-radius: 8px;
+  background-color: white;
+  max-width: 600px;
+  margin: 0 auto;
+  font-size: 1rem;
+  line-height: 1.5;
+  text-align: center;
+}
