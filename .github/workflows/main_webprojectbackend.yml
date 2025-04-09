@@ -39,6 +39,8 @@ jobs:
           echo "APP_DEBUG=false" >> .env
           echo "DB_CONNECTION=sqlite" >> .env
           echo "DB_DATABASE=/home/site/wwwroot/database/database.sqlite" >> .env
+          # Add CORS allowed origins
+          echo "CORS_ALLOWED_ORIGINS=https://webprojectfrontend.azurewebsites.net" >> .env
           # Add GitHub AI API key from secret
           echo "GITHUB_AI_KEY=${{ secrets.GITHUB_AI_KEY }}" >> .env
           php artisan key:generate --force
