@@ -2,22 +2,24 @@
 :root {
   --primary-color: #000000;
   --secondary-color: #ffffff;
-  --accent-color: #f5f1e6; /* Beige-ish color for prompt box */
+  --accent-color: #f5f1e6;
   --text-color: #333333;
   --shadow-color: rgba(0, 0, 0, 0.1);
   --border-radius: 8px;
   --spacing-sm: 8px;
   --spacing-md: 16px;
   --spacing-lg: 24px;
-  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  --font-primary: 'DM Serif Text', serif;
 }
 
-/* Fashion AI component styles - all prefixed with 'fai-' to avoid conflicts */
 
+
+/* For DiscoverPage.tsx */
 .fai-container {
   max-width: 900px;
   margin: 0 auto;
   padding: var(--spacing-lg);
+  padding-top: 100px; 
   font-family: var(--font-primary);
   color: var(--text-color);
   line-height: 1.6;
@@ -110,6 +112,12 @@
   display: flex;
   gap: var(--spacing-md);
   margin-bottom: var(--spacing-md);
+}
+
+.fai-button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
 }
 
 .fai-prompt-input {
@@ -274,10 +282,10 @@
   display: none;
 }
 
-/* Responsive styles */
 @media (max-width: 768px) {
   .fai-container {
     padding: var(--spacing-md);
+    padding-top: 80px;
   }
 
   .fai-title {

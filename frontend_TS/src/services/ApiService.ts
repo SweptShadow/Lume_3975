@@ -67,6 +67,7 @@ const processFashionResponse = async (response: Response): Promise<ApiResponse> 
 
 
     if (!data) {
+      //Returning ApiResponse object with error message(ApiResponseModel.ts).
       return {
         success: false,
         data: {} as AIResponse,
@@ -84,6 +85,8 @@ const processFashionResponse = async (response: Response): Promise<ApiResponse> 
   } catch (jsonError) {
     
     console.error("Error parsing JSON response:", jsonError);
+
+    //Returning ApiResponse object with error message(ApiResponseModel.ts).
     return {
       success: false,
       data: {} as AIResponse,
@@ -92,13 +95,19 @@ const processFashionResponse = async (response: Response): Promise<ApiResponse> 
   }
 };
 
+
 /*
- * Handles different types of error responses based on status codes
- * @param response - The error Response object
- * @returns ApiResponse with appropriate error message
+ * This function handles error responses from the API and returns a user-friendly error message.
+ * Mostly used for debugging purposes.
+ * 
+ * @param response - The error Response object.
+ * @returns ApiResponse with appropriate error message.
  */
 const handleErrorResponse = (response: Response): ApiResponse => {
+
+  //Logging the error response for debugging purposes.
   const statusCode = response.status;
+
 
   const errorMessages: Record<number, string> = {
     413: "The image file is too large. Please use a smaller image.",
@@ -106,10 +115,10 @@ const handleErrorResponse = (response: Response): ApiResponse => {
     429: "Too many requests. Please try again later.",
   };
 
-  const errorMessage =
-    errorMessages[statusCode] ||
-    `Server error: ${statusCode}. Please try again later.`;
+  const errorMessage = errorMessages[statusCode] || `Server error: ${statusCode}. Please try again later.`;
 
+
+  //Returning ApiResponse object with error message(ApiResponseModel.ts).
   return {
     success: false,
     data: {} as AIResponse,
@@ -117,24 +126,39 @@ const handleErrorResponse = (response: Response): ApiResponse => {
   };
 };
 
-/*
- * Main function to analyze fashion images and/or text prompts
- * @param image - The image file to be analyzed (optional)
- * @param prompt - The prompt to be sent with the image
- * @returns Promise resolving to ApiResponse with the analysis results
- */
-export const analyzeFashionImage = async (
-  image: File | null,
-  prompt: string
-): Promise<ApiResponse> => {
-  try {
-    const requestData = createFashionRequestData(image, prompt);
-    const response = await sendFashionRequest(requestData);
-    return await processFashionResponse(response);
-  } catch (error) {
-    console.error("Fashion analysis error:", error);
 
+/*
+ * This function to analyze fashion images and/or text prompts.
+ * It combines the image and prompt into a single request to the API.
+ * It also handles the response and error cases.
+ * 
+ * @param image - The image file to be analyzed(Nullable).
+ * @param prompt - The prompt to be sent with the image.
+ * @returns Promise resolving to ApiResponse with the analysis results.
+ */
+export const analyzeFashionImage = async (image: File | null, prompt: string): Promise<ApiResponse> => {
+  
+  
+  try {
+    //Creating the request data using the image and prompt. (Used helper function to create FormData).
+    const requestData = createFashionRequestData(image, prompt);
+
+    //Sending the request to the API and waiting for the response.
+    const response = await sendFashionRequest(requestData);
+
+    //Processing the response and returning the result.
+    return await processFashionResponse(response);
+
+    
+  } catch (error) {
+
+    console.error("(ApiSevice.ts, analyzeFashionImage) Fashion analysis error:", error);
+
+    //Handling the error cases. (Including timeout errors).
+    //DOMException is an interface represents an abnormal event.
     if (error instanceof DOMException && error.name === "AbortError") {
+
+      //Returning ApiResponse object with error message(ApiResponseModel.ts).
       return {
         success: false,
         data: {} as AIResponse,
@@ -142,10 +166,13 @@ export const analyzeFashionImage = async (
       };
     }
 
+    //Returning ApiResponse object with error message(ApiResponseModel.ts).
     return {
       success: false,
       data: {} as AIResponse,
       error: "Sorry, something went wrong. Please try again later.",
     };
   }
+
+
 };

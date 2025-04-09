@@ -1,0 +1,49 @@
+.landing-container {
+    display: flex;
+    height: 100vh;
+    font-family: 'DM Serif Text', serif;
+}
+
+.landing-left {
+    flex: 5;
+    background: linear-gradient(to bottom right, #f0f0f0, #e0e0e0);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.landing-title {
+    font-size: 8rem;
+    letter-spacing: 0.3rem;
+    margin-bottom: 2rem;
+}
+
+.landing-buttons {
+    display: flex;
+    gap: 20px;
+}
+
+.landing-right {
+    flex: 3;
+}
+
+.landing-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+@media (max-width: 768px) {
+    .landing-container {
+        flex-direction: column;
+    }
+    
+    .landing-left, .landing-right {
+        width: 100%;
+    }
+    
+    .landing-title {
+        font-size: 4rem;
+    }
+}

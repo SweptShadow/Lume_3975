@@ -123,4 +123,8 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /**
+     * Adding React URL to the configuration.
+     */
+    'react_url' => env('REACT_APP_URL', 'http://localhost:5173'),
 ];
