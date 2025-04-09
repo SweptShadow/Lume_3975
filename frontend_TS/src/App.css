@@ -504,6 +504,8 @@
     flex: 5;
     box-sizing: border-box;
     background: linear-gradient(to bottom right, #f0f0f0, #e0e0e0);
+    overflow: hidden; 
+    overflow-y: auto;
 }
 
 /* OOTD Post Column */
@@ -556,14 +558,34 @@
 }
 
 /* Individual description */
-.ootd-indie-description{
+.ootd-indie-description {
   border: 1px solid #ccc;
   padding: 1rem;
   border-radius: 8px;
   background-color: white;
   max-width: 600px;
+  width: 100%;
+  /* ensures it stays responsive */
   margin: 0 auto;
   font-size: 1rem;
   line-height: 1.5;
   text-align: center;
+
+  /* Prevent overflow */
+  overflow-wrap: break-word;
+  word-break: break-word;
+  white-space: normal;
+}
+
+/* Username column */
+.ootd-username {
+  flex: 1;
+  font-weight: bold;
+  word-break: break-word;
+}
+
+/* Description column */
+.ootd-description {
+  flex: 2;
+  word-break: break-word;
 }

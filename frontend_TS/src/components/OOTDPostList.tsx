@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { OOTDPost } from "../models/OOTDPost";
 import { OOTDService } from "../services/OOTDService";
-import { Link } from "react-router-dom"; 
+import { Link } from "react-router-dom";
 
 
 /**
@@ -69,30 +69,30 @@ const OOTDPostList = () =>
                     <Link to={ `/ootd/${ post.id }` } style={ { textDecoration: "none", color: "inherit" } }>
                         <h3>{ post.title }</h3>
                         <img
-                                src={OOTDService.getImageUrl(post.img)}
-                                className="card-img-top img-fluid"
-                                alt={post.title}
-                                onError={(e) => {
-                                    // Fallback if image fails to load
-                                    const target = e.target as HTMLImageElement;
-                                    target.src = "/images/image-placeholder.jpg";
-                                    target.alt = "Image not available";
-                                }}
-                            />
+                            src={ OOTDService.getImageUrl(post.img) }
+                            className="card-img-top img-fluid"
+                            alt={ post.title }
+                            onError={ (e) =>
+                            {
+                                // Fallback if image fails to load
+                                const target = e.target as HTMLImageElement;
+                                target.src = "/images/image-placeholder.jpg";
+                                target.alt = "Image not available";
+                            } }
+                        />
                     </Link>
                     {/* Clickable title and image END */ }
 
-                    {/* Buttons START*/}
+                    {/* Buttons START*/ }
                     <div className="card-body d-flex justify-content-around">
+                        <h3 className="creator-title justify-content-around"> @{ post.username }</h3>
+
                         <button
                             type="button"
                             className={ `btn ${ liked[ post.id ] ? 'btn-dark' : 'btn-outline-dark' }` }
                             onClick={ () => handleLike(post.id) }
                         >
                             { liked[ post.id ] ? '❤️' : '❤️' } { likes[ post.id ] } Likes
-                        </button>
-                        <button type="button" className="btn btn-outline-dark">
-                            💬 Comment
                         </button>
                     </div>
                     {/* Buttons END*/ }
