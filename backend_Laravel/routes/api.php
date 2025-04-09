@@ -23,3 +23,4 @@ Route::get('/ai-debug', function() {
     return response()->json(['status' => 'API is working']);
 });
 
+Route::post('/analyze', [FashionAnalysisController::class, 'analyze']);

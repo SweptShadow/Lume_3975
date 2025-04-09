@@ -94,15 +94,22 @@
     </div>
 
 
+    {{-- Need this js for event listner!! --}}
     <script>
+        
+        //This script handles the image preview functionality
         document.addEventListener('DOMContentLoaded', function() {
+
             const imageInput = document.getElementById('image');
             const imagePreview = document.getElementById('preview');
             const imagePlaceholder = document.querySelector('.image-placeholder');
             const fileLabel = document.querySelector('.custom-file-label');
             
+            //Set the initial state of the image preview and placeholder.
             imageInput.addEventListener('change', function() {
+
                 const file = this.files[0];
+                
                 if (file) {
                     const reader = new FileReader();
                     

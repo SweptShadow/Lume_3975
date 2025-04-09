@@ -10,28 +10,21 @@ use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\Controller;
 
 class UsersController extends Controller
-{
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
+{   
 
 
     public function login(Request $request){
         $request->validate([
-            'username' => 'required|',
+            'email' => 'required|email',
             'password' => 'required',
         ]);
 
         // Retrieve user by email
-        $user = users::where('username', $request->username)->first();
+        $user = Users::where('email', $request->email)->first();
 
         if ($user && Hash::check($request->password, $user->password)) {
             
-            if ($user->is_admin) { // Assuming `is_approved` exists in your `users` table
+            if ($user->is_admin) {
                 Auth::login($user);
                 Session::put('username', $user->username);
                 Session::put('is_admin', $user->is_admin);
@@ -50,73 +43,36 @@ class UsersController extends Controller
 
     public function register(Request $request)
     {
-        // Validate user input
         $validated = $request->validate([
-            'firstName' => 'required|string|max:255',
-            'lastName' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            'username' => 'required|string|max:255|unique:users,username',
+            'email' => 'required|string|email|max:255|unique:users,email',
             'password' => [
                 'required',
                 'string',
                 'min:8',
-                'regex:/[A-Z]/',  // Uppercase
-                'regex:/[a-z]/',  // Lowercase
-                'regex:/[0-9]/',  // Number
-                'regex:/[!@#$%^&*(),.?":{}|<>]/' // Special character
+                'regex:/[A-Z]/',  
+                'regex:/[a-z]/',  
+                'regex:/[0-9]/', 
+                'regex:/[!@#$%^&*(),.?":{}|<>]/'
             ]
         ]);
-
-        // Create user and hash password
-        $user = users::create([
+    
+        $user = Users::create([
             'username' => $validated['username'],
+            'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
-            'firstname' => $validated['firstname'],
-            'lastname' => $validated['lastname'], 
-            'is_admin' => 0
+            'Role' => 'user',
+            'IsApproved' => false
         ]);
-
-        // Redirect to pending page
-        return redirect()->route('index');
+    
+        // Redirect to login with a success message
+        return redirect()->route('pending')->with('success', 'Registration successful. Please wait for approval.');
     }
-
-
 
 
     public function logout(){
         Auth::logout();
         Session::flush();
         return redirect('/login');
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Users $users)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Users $users)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Users $users)
-    {
-        //
     }
 }

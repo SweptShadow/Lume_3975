@@ -9,14 +9,15 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+    public function up()
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string("username");
-            $table->string("password");
-            $table->string("email");
-            $table->boolean("is_admin");
+            $table->string('username')->unique();
+            $table->string('email')->unique();
+            $table->string('password');
+            $table->string('Role');
+            $table->boolean('IsApproved')->default(false);
             $table->timestamps();
         });
     }
