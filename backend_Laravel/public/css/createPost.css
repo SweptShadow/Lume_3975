@@ -1,0 +1,235 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'DM Serif Text', serif;
+    background-color: #f8f8f8;
+    color: #333;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+.post-creation-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    padding: 40px;
+    margin-top: 20px;
+    opacity: 0;
+    animation: fadeIn 0.8s ease-in forwards;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+.brand-title {
+    font-family: 'DM Serif Text', serif;
+    font-size: 3rem;
+    letter-spacing: 0.3rem;
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.page-subtitle {
+    font-weight: 300;
+    font-size: 1.2rem;
+    color: #666;
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+.form-container {
+    width: 100%;
+    max-width: 800px;
+}
+
+.post-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+.form-left {
+    grid-column: 1;
+}
+
+.form-right {
+    grid-column: 2;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    color: #555;
+    letter-spacing: 0.05rem;
+    font-weight: 500;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #ddd;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 4px;
+    font-family: 'DM Serif Text', serif;
+    font-size: 0.9rem;
+    transition: all 0.3s;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #999;
+    box-shadow: 0 0 0 2px rgba(0,0,0,0.05);
+}
+
+textarea.form-control {
+    min-height: 200px;
+    resize: vertical;
+}
+
+.image-preview-container {
+    width: 100%;
+    height: 250px;
+    border: 2px dashed #ddd;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+    overflow: hidden;
+    position: relative;
+    background-color: #f9f9f9;
+}
+
+.image-preview {
+    max-width: 100%;
+    max-height: 100%;
+    display: none;
+}
+
+.image-placeholder {
+    color: #aaa;
+    font-size: 0.9rem;
+}
+
+.custom-file-input {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+
+.custom-file-label {
+    display: inline-block;
+    padding: 12px 20px;
+    background-color: #f5f5f5;
+    color: #555;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'DM Serif Text', serif;    
+    font-size: 0.9rem;
+    transition: all 0.3s;
+    width: 100%;
+    text-align: center;
+}
+
+.custom-file-label:hover {
+    background-color: #eee;
+}
+
+.btn {
+    display: inline-block;
+    padding: 14px 28px;
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'DM Serif Text', serif;    
+    font-weight: 500;
+    letter-spacing: 0.1rem;
+    transition: all 0.3s;
+    text-decoration: none;
+    text-align: center;
+    font-size: 1rem;
+    width: 100%;
+    text-transform: uppercase;
+}
+
+.btn:hover {
+    background-color: #111;
+    transform: translateY(-2px);
+}
+
+.btn-container {
+    margin-top: 20px;
+    grid-column: span 2;
+}
+
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    width: 100%;
+    text-align: center;
+}
+
+.alert-success {
+    background-color: rgba(76, 175, 80, 0.1);
+    color: #4CAF50;
+    border: 1px solid rgba(76, 175, 80, 0.2);
+}
+
+.alert-danger {
+    background-color: rgba(244, 67, 54, 0.1);
+    color: #F44336;
+    border: 1px solid rgba(244, 67, 54, 0.2);
+}
+
+.invalid-feedback {
+    color: #e3342f;
+    font-size: 0.8rem;
+    margin-top: 5px;
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+    .post-form {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-left, .form-right, .btn-container {
+        grid-column: 1;
+    }
+    
+    .post-creation-container {
+        padding: 30px 20px;
+    }
+    
+    .brand-title {
+        font-size: 2.5rem;
+    }
+}

@@ -20,7 +20,7 @@ use App\Http\Controllers\api\ArticleController;
 //! Route for landing Page (Including react redirect routes).
 Route::get('/', function () {
     return view('welcome');
-});
+}) ->name('welcome');
 Route::get('/discover', function() {
     return redirect(config('app.react_url') . '/discover');
 }) -> name('discover');
@@ -39,6 +39,15 @@ Route::get('/signup', function () {
 
 // Brian added
 Route::get('/articles', [ArticleController::class, 'index']);
+//! Route for creating post page
+Route::get('/createPost', function () {
+    return view('common/createPost');
+})->name('createPost');
+
+//! Route for pending page
+Route::get('/pending', function () {
+    return view('common/pendingPage');
+})->name('pending');
 
 //! Commented out cuz it's causing
 // Placeholder image route for development
