@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Style Recommendations</title>
+    <title>AI Style Recommendations | Lume</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -13,36 +14,16 @@
             background-color: #f8f9fa;
             color: #212529;
         }
-        .container {
+        .main-container {
             max-width: 900px;
             margin: 0 auto;
             padding: 20px;
         }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-        .title {
-            font-size: 24px;
-            font-weight: 600;
-            color: #000;
-        }
-        .back-button {
-            display: inline-block;
-            padding: 10px 15px;
-            background-color: #000;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-        .content {
+        .content-card {
             background: white;
             border-radius: 8px;
             padding: 30px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         .loading {
             text-align: center;
@@ -66,32 +47,115 @@
             text-align: center;
             padding: 30px;
         }
-        /* Markdown styles */
-        .markdown-content h1 { font-size: 24px; margin-top: 0; }
-        .markdown-content h2 { font-size: 20px; margin-top: 25px; }
-        .markdown-content h3 { font-size: 18px; }
-        .markdown-content p { line-height: 1.6; }
-        .markdown-content ul { padding-left: 20px; }
-        .markdown-content li { margin-bottom: 5px; }
-        .markdown-content strong { font-weight: 600; }
+        /* Better markdown styling */
+        .recommendation-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #000;
+        }
+        .recommendation-intro {
+            font-size: 16px;
+            margin-bottom: 24px;
+            color: #666;
+        }
+        .outfit-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-top: 20px;
+            margin-bottom: 8px;
+            color: #000;
+        }
+        .outfit-item {
+            margin-bottom: 4px;
+        }
+        .outfit-item strong {
+            font-weight: 600;
+            color: #222;
+        }
+        .outfit-section {
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #eee;
+        }
+        .where-to-shop {
+            margin-top: 24px;
+            padding-top: 12px;
+            font-weight: 600;
+        }
+        .navbar-custom {
+            background-color: #ffffff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 24px;
+        }
+        .footer {
+            font-family: 'DM Serif Text', serif;
+            width: 100%; /* Change from 100vw to 100% */
+            height: auto;
+            background-color: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            bottom: 0;
+            left: 0;
+            text-align: center;
+            margin-top: 30px;
+            padding: 15px 0;
+            position: relative;
+        }
+        .footer-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        .footer-links {
+            font-size: 0.9rem;
+            color: #777;
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1 class="title">AI Style Recommendations</h1>
-            <a href="javascript:history.back()" class="back-button">Back to Discover</a>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light navbar-custom mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="/">Lume</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/discover">Discover</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/ootd">OOTD</a>
+                    </li>
+                </ul>
+            </div>
         </div>
-        
-        <div class="content">
+    </nav>
+
+    <div class="main-container">
+        <div class="content-card">
             <div class="loading">
                 <div class="spinner"></div>
                 <p>Loading recommendations...</p>
             </div>
             <div class="recommendation-content" style="display:none;"></div>
-            <div class="error-message" style="display:none;"></div>
+            <div class="error-message text-danger" style="display:none;"></div>
         </div>
     </div>
+
+    <footer class="footer">
+        <div class="footer-inner">
+            <p class="mb-0">© 2025 lumé</p>
+            <div class="footer-links">
+                Brian Diep A00959233 | Yujin Jeong | Dalraj Bains | Evan Vink
+            </div>
+        </div>
+    </footer>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -119,14 +183,57 @@
                     loadingElement.style.display = 'none';
                     
                     if (data.success) {
-                        // Convert markdown line breaks to <br> tags
-                        const formattedContent = data.recommendations
-                            .replace(/\n\n## /g, '<h2>')
-                            .replace(/\n\n/g, '</p><p>')
-                            .replace(/\n- \*\*(.*?)\*\*: (.*?)$/gm, '<br><strong>$1:</strong> $2')
-                            .replace(/\n- (.*?)$/gm, '<br>• $1');
+                        // Parse and format the recommendation text
+                        let text = data.recommendations;
+                        
+                        // Extract title and intro
+                        const titleMatch = text.match(/# (.*?)(?:\n|$)/);
+                        const title = titleMatch ? titleMatch[1] : 'Style Recommendation';
+                        
+                        // Find intro paragraph
+                        const introMatch = text.match(/# .*?\n(.*?)(?:\n\n|$)/);
+                        const intro = introMatch ? introMatch[1] : '';
+                        
+                        // Format outfit ideas
+                        let formattedContent = '<div class="recommendation-title">' + title + '</div>';
+                        formattedContent += '<p class="recommendation-intro">' + intro + '</p>';
+                        
+                        // Clean up the text for better parsing
+                        text = text.replace(/##/g, ''); // Remove ## markers
+                        text = text.replace(/\*\*/g, ''); // Remove ** markers
+                        
+                        // Extract outfit sections using a more robust pattern
+                        const outfitPattern = /Outfit Idea (\d+): ([^\n]+)([\s\S]*?)(?=Outfit Idea \d+:|Where to Shop|$)/g;
+                        let match;
+                        let outfitNumber = 1;
+                        
+                        while ((match = outfitPattern.exec(text)) !== null) {
+                            const outfitTitle = match[2].trim();
+                            let outfitDetails = match[3].trim();
                             
-                        contentElement.innerHTML = `<div class="markdown-content"><p>${formattedContent}</p></div>`;
+                            formattedContent += '<div class="outfit-section">';
+                            formattedContent += '<div class="outfit-title">Outfit Idea ' + outfitNumber + ': ' + outfitTitle + '</div>';
+                            
+                            // Parse each item in the outfit
+                            const itemPattern = /- (Top|Bottom|Outerwear|Shoes|Accessories): ([^-]+)/g;
+                            let itemMatch;
+                            
+                            while ((itemMatch = itemPattern.exec(outfitDetails)) !== null) {
+                                formattedContent += '<div class="outfit-item"><strong>' + itemMatch[1] + ':</strong> ' + itemMatch[2].trim() + '</div>';
+                            }
+                            
+                            formattedContent += '</div>';
+                            outfitNumber++;
+                        }
+                        
+                        // Add Where to Shop section if it exists
+                        const shopMatch = text.match(/Where to Shop([\s\S]*?)$/);
+                        if (shopMatch) {
+                            formattedContent += '<div class="where-to-shop">Where to Shop</div>';
+                            formattedContent += '<p>' + shopMatch[1].trim() + '</p>';
+                        }
+                        
+                        contentElement.innerHTML = formattedContent;
                         contentElement.style.display = 'block';
                     } else {
                         // Display error message
@@ -142,5 +249,7 @@
                 });
         });
     </script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
