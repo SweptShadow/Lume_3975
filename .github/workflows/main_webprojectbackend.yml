@@ -96,7 +96,7 @@ jobs:
         with:
           app-name: 'WebProjectBackEnd'
           slot-name: 'Production'
-          package: ./backend_Laravel
+          package: ./backend
 
       - name: 'Run Laravel post-deployment commands'
         run: |
