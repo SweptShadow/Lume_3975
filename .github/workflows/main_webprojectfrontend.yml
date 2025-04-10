@@ -62,6 +62,11 @@ jobs:
                 <mimeMap fileExtension=".woff" mimeType="application/font-woff" />
                 <mimeMap fileExtension=".woff2" mimeType="application/font-woff2" />
               </staticContent>
+              <httpCompression>
+                <dynamicTypes>
+                  <add mimeType="application/json" enabled="true" />
+                </dynamicTypes>
+              </httpCompression>
             </system.webServer>
           </configuration>
           EOL
@@ -106,9 +111,15 @@ jobs:
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_090C2BAF3AFC472DBEF8FD5AFBB0AA2A }}
 
       - name: 'Deploy to Azure Web App'
-        id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
+        id: deploy-to-webapp
         with:
           app-name: 'WebProjectFrontEnd'
           slot-name: 'Production'
           package: .
+          
+      - name: 'Configure Azure Web App for SPA'
+        uses: azure/cli@v1
+        with:
+          inlineScript: |
+            az webapp config set --name WebProjectFrontEnd --resource-group Web_Project --startup-file "pm2 serve /home/site/wwwroot --no-daemon --spa"

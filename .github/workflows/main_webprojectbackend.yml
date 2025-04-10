@@ -9,7 +9,7 @@ on:
       - main
     paths:
       - 'backend_Laravel/**'
-      - '.github/workflows/main_webprojectbackend.yml' 
+      - '.github/workflows/main_webprojectbackend.yml'
   workflow_dispatch:
 
 jobs:
@@ -32,9 +32,7 @@ jobs:
         run: |
           cd backend_Laravel
           composer install --no-dev --optimize-autoloader
-          mkdir -p database
-          touch database/database.db
-          chmod 755 database/database.db
+          
           # Create .env file directly instead of copying from .env.example
           cat > .env << 'EOL'
           APP_NAME=Lume
@@ -105,10 +103,15 @@ jobs:
         with:
           inlineScript: |
             az webapp ssh --name WebProjectBackEnd --resource-group Web_Project --command "chmod -R 777 /home/site/wwwroot/storage"
+            az webapp ssh --name WebProjectBackEnd --resource-group Web_Project --command "chmod -R 777 /home/site/wwwroot/bootstrap/cache"
 
       - name: 'Run Laravel post-deployment commands'
         run: |
-          az webapp ssh --name WebProjectBackEnd --resource-group Web_Project --timeout 60 --port 2222 << EOF
+          az webapp ssh --name WebProjectBackEnd --resource-group Web_Project --timeout 120 --port 2222 << EOF
+          mkdir -p /home/site/wwwroot/database
+          touch /home/site/wwwroot/database/database.db
+          chmod 777 /home/site/wwwroot/database
+          chmod 777 /home/site/wwwroot/database/database.db
           cd /home/site/wwwroot
           php artisan migrate --force
           php artisan config:cache
