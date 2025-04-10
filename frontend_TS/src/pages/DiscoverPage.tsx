@@ -1,4 +1,4 @@
-import FashionAnalyzer from '../components/Discover/Prompt';
+// import FashionAnalyzer from '../components/Discover/Prompt';
 import AIRecommendationPanel from '../components/Discover/AIRecommendationPanel';
 
 /**
@@ -16,8 +16,8 @@ const DiscoverPage = () => {
       {/* Add the AI Recommendation Panel */}
       <AIRecommendationPanel />
       
-      {/* Original Fashion Analysis Component */}
-      <FashionAnalyzer />
+      {/* Original Fashion Analysis Component - future implementation with HM */}
+      {/* <FashionAnalyzer /> */}
     </div>
   );
 };
