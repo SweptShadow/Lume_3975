@@ -14,10 +14,10 @@ const Navbar = () => {
                 <div className="ms-auto">
                     <ul className="navbar-nav d-flex flex-row gap-4">
                         <li className="nav-item">
-                            <a className="nav-link" href={`${API_BASE_URL}/signup`}>Register</a>
+                            <a className="nav-link" href={`${API_BASE_URL}/login`}>Login</a>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" href={`${API_BASE_URL}/login`}>Login</a>
+                            <a className="nav-link" href={`${API_BASE_URL}/signup`}>Register</a>
                         </li>
                     </ul>
                 </div>

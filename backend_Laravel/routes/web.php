@@ -198,6 +198,19 @@ Route::get('/debug', function () {
     ];
 });
 
+// Debug route to check routing
+Route::get('/route-debug', function () {
+    return response()->json([
+        'route' => request()->path(),
+        'url' => request()->url(),
+        'full_url' => request()->fullUrl(),
+        'method' => request()->method(),
+        'server_protocol' => $_SERVER['SERVER_PROTOCOL'] ?? 'unknown',
+        'script_name' => $_SERVER['SCRIPT_NAME'] ?? 'unknown',
+        'request_uri' => $_SERVER['REQUEST_URI'] ?? 'unknown',
+    ]);
+});
+
 
 
 

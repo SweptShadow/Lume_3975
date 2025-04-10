@@ -9,9 +9,9 @@
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
-    # Handle X-XSRF-Token Header
-    RewriteCond %{HTTP:x-xsrf-token} .
-    RewriteRule .* - [E=HTTP_X_XSRF_TOKEN:%{HTTP:X-XSRF-Token}]
+    # Remove index.php from URLs
+    RewriteCond %{THE_REQUEST} ^GET\ /index\.php [NC]
+    RewriteRule ^index\.php/(.*)$ /$1 [L,R=301]
 
     # Redirect Trailing Slashes If Not A Folder...
     RewriteCond %{REQUEST_FILENAME} !-d
@@ -22,4 +22,12 @@
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
+
+    # Handle CORS
+    <IfModule mod_headers.c>
+        Header set Access-Control-Allow-Origin "https://webprojectfrontend.azurewebsites.net"
+        Header set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+        Header set Access-Control-Allow-Headers "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+        Header set Access-Control-Allow-Credentials "true"
+    </IfModule>
 </IfModule>
