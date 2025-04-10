@@ -85,12 +85,7 @@ class ArticleController extends Controller
         ]);
 
         // Return JSON response with CORS headers
-        return $this->addCorsHeaders(
-            response()->json([
-                'message' => 'Post created successfully!',
-                'article' => $article
-            ], 201)
-        );
+        return redirect("/profile");
     }
 
     /**
