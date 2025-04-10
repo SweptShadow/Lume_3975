@@ -32,7 +32,9 @@ jobs:
         run: |
           cd backend_Laravel
           composer install --no-dev --optimize-autoloader
-          touch database.db
+          mkdir -p database
+          touch database/database.db
+          chmod 755 database/database.db
           # Create .env file directly instead of copying from .env.example
           cat > .env << 'EOL'
           APP_NAME=Lume
@@ -41,7 +43,7 @@ jobs:
           APP_DEBUG=false
           APP_URL=https://webprojectbackend.azurewebsites.net
           DB_CONNECTION=sqlite
-          DB_DATABASE=/home/site/wwwroot/database.db
+          DB_DATABASE=/home/site/wwwroot/database/database.db
           LOG_CHANNEL=stack
           BROADCAST_DRIVER=log
           CACHE_DRIVER=file
