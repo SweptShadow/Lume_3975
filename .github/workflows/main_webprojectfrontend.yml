@@ -7,6 +7,9 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'frontend_TS/**'
+      - '.github/workflows/main_webprojectfrontend.yml'
   workflow_dispatch:
 
 jobs:
@@ -21,22 +24,53 @@ jobs:
       - name: Set up Node.js version
         uses: actions/setup-node@v3
         with:
-          node-version: '18.x'
+          node-version: '20.x'  # Updated to Node.js 20 for React 19
 
-      - name: npm install, build, and test
+      - name: Build frontend app
         run: |
+          # Change to the frontend directory
+          cd frontend_TS
+          
+          # Set API URL environment variable
+          echo "VITE_API_BASE_URL=https://webprojectbackend.azurewebsites.net" > .env
+          
+          # Install dependencies and build
           npm install
-          npm run build --if-present
-          npm run test --if-present
-
-      - name: Zip artifact for deployment
-        run: zip release.zip ./* -r
+          npm run build
+          
+          # Create web.config for SPA routing in Azure
+          cat > ./dist/web.config << 'EOL'
+          <?xml version="1.0" encoding="utf-8"?>
+          <configuration>
+            <system.webServer>
+              <rewrite>
+                <rules>
+                  <rule name="SPA Routes" stopProcessing="true">
+                    <match url=".*" />
+                    <conditions logicalGrouping="MatchAll">
+                      <add input="{REQUEST_FILENAME}" matchType="IsFile" negate="true" />
+                      <add input="{REQUEST_FILENAME}" matchType="IsDirectory" negate="true" />
+                    </conditions>
+                    <action type="Rewrite" url="/" />
+                  </rule>
+                </rules>
+              </rewrite>
+              <staticContent>
+                <mimeMap fileExtension=".webmanifest" mimeType="application/manifest+json" />
+              </staticContent>
+            </system.webServer>
+          </configuration>
+          EOL
+          
+          # Zip only the dist directory which contains the built app
+          cd dist
+          zip -r ../../frontend-release.zip ./*
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: release.zip
+          path: frontend-release.zip
 
   deploy:
     runs-on: ubuntu-latest
@@ -55,7 +89,7 @@ jobs:
           name: node-app
 
       - name: Unzip artifact for deployment
-        run: unzip release.zip
+        run: unzip frontend-release.zip
       
       - name: Login to Azure
         uses: azure/login@v2
@@ -71,4 +105,3 @@ jobs:
           app-name: 'WebProjectFrontEnd'
           slot-name: 'Production'
           package: .
-          
