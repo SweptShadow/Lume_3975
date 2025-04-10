@@ -101,51 +101,18 @@ jobs:
         with:
           inlineScript: |
             az webapp ssh --name WebProjectBackEnd --resource-group Web_Project --timeout 180 --port 2222 << EOF
-            # Create web.config for IIS/Azure with proper URL rewriting
-            cat > /home/site/wwwroot/web.config << 'EOL'
-            <?xml version="1.0" encoding="UTF-8"?>
-            <configuration>
-              <system.webServer>
-                <rewrite>
-                  <rules>
-                    <!-- Handle direct URLs without index.php -->
-                    <rule name="Laravel Routes" stopProcessing="true">
-                      <match url="^((?!index\.php).+)$" />
-                      <conditions logicalGrouping="MatchAll">
-                        <add input="{REQUEST_FILENAME}" matchType="IsDirectory" negate="true" />
-                        <add input="{REQUEST_FILENAME}" matchType="IsFile" negate="true" />
-                      </conditions>
-                      <action type="Rewrite" url="index.php/{R:1}" appendQueryString="true" />
-                    </rule>
-                    <!-- Handle index.php/route URLs -->
-                    <rule name="Laravel Routes with index.php" stopProcessing="true">
-                      <match url="^index\.php/(.*)$" />
-                      <action type="Rewrite" url="index.php/{R:1}" appendQueryString="true" />
-                    </rule>
-                    <!-- Handle all URLs that don't match files or folders -->
-                    <rule name="Laravel Fallback" stopProcessing="true">
-                      <match url=".*" />
-                      <conditions>
-                        <add input="{REQUEST_FILENAME}" matchType="IsFile" negate="true" />
-                        <add input="{REQUEST_FILENAME}" matchType="IsDirectory" negate="true" />
-                      </conditions>
-                      <action type="Rewrite" url="index.php" appendQueryString="true" />
-                    </rule>
-                  </rules>
-                </rewrite>
-                <httpProtocol>
-                  <customHeaders>
-                    <add name="Access-Control-Allow-Origin" value="https://webprojectfrontend.azurewebsites.net" />
-                    <add name="Access-Control-Allow-Headers" value="Content-Type, Authorization, X-Requested-With" />
-                    <add name="Access-Control-Allow-Methods" value="GET, POST, PUT, DELETE, OPTIONS" />
-                    <add name="Access-Control-Allow-Credentials" value="true" />
-                  </customHeaders>
-                </httpProtocol>
-              </system.webServer>
-            </configuration>
-            EOL
+            # Run diagnostic commands to help troubleshoot
+            echo "Current directory structure:"
+            ls -la /home/site/wwwroot/
             
-            # Create .htaccess for Apache with proper CORS headers
+            # Fix database path in config using a more precise sed replacement
+            sed -i 's/database_path(env("DB_DATABASE"))/env("DB_DATABASE")/' /home/site/wwwroot/config/database.php
+            
+            # Create database file with proper permissions
+            touch /home/site/wwwroot/database.db
+            chmod 777 /home/site/wwwroot/database.db
+            
+            # Set up .htaccess with proper routing and CORS
             cat > /home/site/wwwroot/public/.htaccess << 'EOL'
             <IfModule mod_rewrite.c>
                 <IfModule mod_negotiation.c>
@@ -157,6 +124,10 @@ jobs:
                 # Handle Authorization Header
                 RewriteCond %{HTTP:Authorization} .
                 RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+                
+                # Remove index.php from path (critical fix)
+                RewriteCond %{THE_REQUEST} ^GET\ /index\.php [NC]
+                RewriteRule ^index\.php/(.*)$ /$1 [L,R=301]
                 
                 # Redirect Trailing Slashes If Not A Folder...
                 RewriteCond %{REQUEST_FILENAME} !-d
@@ -171,56 +142,52 @@ jobs:
             
             # Add CORS headers
             <IfModule mod_headers.c>
-                Header set Access-Control-Allow-Origin "https://webprojectfrontend.azurewebsites.net"
-                Header set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
-                Header set Access-Control-Allow-Headers "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-                Header set Access-Control-Allow-Credentials "true"
+                Header always set Access-Control-Allow-Origin "https://webprojectfrontend.azurewebsites.net"
+                Header always set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+                Header always set Access-Control-Allow-Headers "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+                Header always set Access-Control-Allow-Credentials "true"
                 
-                # Handle OPTIONS preflight requests
+                # Handle OPTIONS preflight requests (critical for CORS)
                 RewriteEngine On
                 RewriteCond %{REQUEST_METHOD} OPTIONS
                 RewriteRule ^(.*)$ $1 [R=200,L]
             </IfModule>
             EOL
             
-            # Fix environment file to have proper path to database.db
-            cat > /home/site/wwwroot/.env << 'EOL'
-            APP_NAME=Lume
-            APP_ENV=production
-            APP_KEY=base64:IGtdSyUcU/95yJuLbsVO0FxpBddKAZSBknBkENVKI+g=
-            APP_DEBUG=true
-            APP_URL=https://webprojectbackend.azurewebsites.net
-            DB_CONNECTION=sqlite
-            DB_DATABASE=/home/site/wwwroot/database.db
-            LOG_CHANNEL=stack
-            BROADCAST_DRIVER=log
-            CACHE_DRIVER=file
-            FILESYSTEM_DISK=local
-            QUEUE_CONNECTION=sync
-            SESSION_DRIVER=file
-            SESSION_LIFETIME=120
-            GITHUB_AI_KEY=${{ secrets.AI_API_KEY }}
-            CORS_ALLOWED_ORIGINS=https://webprojectfrontend.azurewebsites.net
+            # Create an API test endpoint to verify functionality
+            mkdir -p /home/site/wwwroot/public/test-api
+            cat > /home/site/wwwroot/public/test-api/index.php << 'EOL'
+            <?php
+            header('Content-Type: application/json');
+            header('Access-Control-Allow-Origin: https://webprojectfrontend.azurewebsites.net');
+            header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+            header('Access-Control-Allow-Headers: Origin, Content-Type, Accept, Authorization');
+            echo json_encode([
+                'status' => 'success',
+                'message' => 'API test endpoint is working!',
+                'timestamp' => date('Y-m-d H:i:s')
+            ]);
             EOL
             
-            # Create database and correct permissions
-            touch /home/site/wwwroot/database.db
-            chmod 777 /home/site/wwwroot/database.db
-            chmod -R 777 /home/site/wwwroot/storage
-            chmod -R 777 /home/site/wwwroot/bootstrap/cache
-            
-            # Clear all Laravel caches first before rebuilding
+            # Completely clear Laravel caches
             cd /home/site/wwwroot
             php artisan config:clear
             php artisan cache:clear
             php artisan route:clear
             php artisan view:clear
             
-            # Run migrations and seed database
-            php artisan migrate:fresh --force
+            # Fix permissions again
+            chmod -R 777 /home/site/wwwroot/storage
+            chmod -R 777 /home/site/wwwroot/bootstrap/cache
+            chmod 777 /home/site/wwwroot/database.db
+            
+            # Run migrations with debugging
+            php -d display_errors=1 artisan migrate:fresh --force
+            
+            # Create default user
             php artisan tinker --execute="use App\\Models\\Users; Users::create(['username' => 'admin', 'email' => 'c@c.c', 'password' => bcrypt('P@\$\$w0rd'), 'Role' => 'admin', 'IsApproved' => true]);"
             
-            # Rebuild cache after all files are updated
+            # Cache config AFTER everything else
             php artisan config:cache
             php artisan route:cache
             EOF

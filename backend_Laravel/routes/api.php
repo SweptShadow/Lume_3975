@@ -32,3 +32,22 @@ Route::get('/ai-debug', function() {
 // Authentication endpoints
 Route::post('/auth/login', [UsersController::class, 'apiLogin']);
 Route::post('/auth/register', [UsersController::class, 'apiRegister']);
+
+// Debug route
+Route::get('/debug', function() {
+    return response()->json([
+        'database_path' => config('database.connections.sqlite.database'),
+        'database_exists' => file_exists(config('database.connections.sqlite.database')),
+        'database_writable' => is_writable(config('database.connections.sqlite.database')),
+        'storage_writable' => is_writable(storage_path()),
+        'cache_writable' => is_writable(storage_path('framework/cache')),
+        'app_url' => config('app.url'),
+        'cors_origin' => config('cors.allowed_origins'),
+        'php_version' => PHP_VERSION,
+    ]);
+});
+
+// Simple health check route
+Route::get('/health', function() {
+    return response()->json(['status' => 'healthy', 'timestamp' => now()->toDateTimeString()]);
+});
