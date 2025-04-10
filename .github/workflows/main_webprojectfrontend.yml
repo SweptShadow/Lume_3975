@@ -1,13 +1,13 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy Frontend to Azure Web App - WebProjectFrontEnd
+name: Build and deploy Node.js app to Azure Web App - WebProjectFrontEnd
 
 on:
   push:
     branches:
       - main
-  workflow_dispatch:  # Keep this to allow manual triggering
+  workflow_dispatch:
 
 jobs:
   build:
@@ -18,29 +18,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Node.js
+      - name: Set up Node.js version
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '18.x'
 
-      - name: Build frontend
+      - name: npm install, build, and test
         run: |
-          cd frontend_TS
-          npm ci
-          # Set the API URL to point to your backend
-          echo "VITE_API_BASE_URL=https://webprojectbackend.azurewebsites.net" > .env
-          npm run build
+          npm install
+          npm run build --if-present
+          npm run test --if-present
 
       - name: Zip artifact for deployment
-        run: |
-          cd frontend_TS/dist
-          zip -r ../../frontend-release.zip ./*
+        run: zip release.zip ./* -r
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: frontend-release.zip
+          path: release.zip
 
   deploy:
     runs-on: ubuntu-latest
@@ -59,45 +55,20 @@ jobs:
           name: node-app
 
       - name: Unzip artifact for deployment
-        run: unzip frontend-release.zip
-
-      # For SPA routing with React/Vue, create a web.config file
-      - name: Create web.config for SPA routing
-        run: |
-          cat > web.config << 'EOL'
-          <?xml version="1.0" encoding="utf-8"?>
-          <configuration>
-            <system.webServer>
-              <rewrite>
-                <rules>
-                  <rule name="SPA Routes" stopProcessing="true">
-                    <match url=".*" />
-                    <conditions logicalGrouping="MatchAll">
-                      <add input="{REQUEST_FILENAME}" matchType="IsFile" negate="true" />
-                      <add input="{REQUEST_FILENAME}" matchType="IsDirectory" negate="true" />
-                    </conditions>
-                    <action type="Rewrite" url="/" />
-                  </rule>
-                </rules>
-              </rewrite>
-              <staticContent>
-                <mimeMap fileExtension=".webmanifest" mimeType="application/manifest+json" />
-              </staticContent>
-            </system.webServer>
-          </configuration>
-          EOL
+        run: unzip release.zip
       
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_FRONTEND }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_FRONTEND }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_FRONTEND }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_09FAF76A35684773ADF1D9E125DABF04 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_733AC50AF0E94D8BA208985EB6297841 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_090C2BAF3AFC472DBEF8FD5AFBB0AA2A }}
 
       - name: 'Deploy to Azure Web App'
-        uses: azure/webapps-deploy@v3
         id: deploy-to-webapp
+        uses: azure/webapps-deploy@v3
         with:
           app-name: 'WebProjectFrontEnd'
           slot-name: 'Production'
           package: .
+          
