@@ -23,7 +23,7 @@
                 @endif
 
 
-                <form method="POST" action="{{ route('welcome') }}" class="auth-form">
+                <form method="POST" action="{{ route('login.submit') }}" class="auth-form">
                     @csrf
                     <div class="form-group">
                         <label for="email">Email</label>

@@ -24,7 +24,7 @@
 
                         <div class="form-group">
                             <label for="username">Username</label>
-                            <input id="username" type="text" class="form-control @error('username') is-invalid @enderror" name="username" value="{{ old('username') }}" required autofocus>
+                            <input id="username" type="text" class="form-control @error('username') is-invalid @enderror" name="username" value="{{ session('username') }}" required autofocus readonly>
                             @error('username')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>

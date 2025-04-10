@@ -43,10 +43,9 @@ class ArticleController extends Controller
     {
         $article = Article::findOrFail($id);
         $article->increment('likes');
-        
-        return $this->addCorsHeaders(
-            response()->json(['message' => 'Liked!', 'likes' => $article->likes])
-        );
+
+
+        return response('', 204);
     }
 
     /**

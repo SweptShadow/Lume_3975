@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Users;
+use App\Models\Article;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\Controller;
 
@@ -24,14 +25,14 @@ class UsersController extends Controller
 
         if ($user && Hash::check($request->password, $user->password)) {
             
-            if ($user->is_admin) {
+            if ($user->IsApproved) {
                 Auth::login($user);
                 Session::put('username', $user->username);
-                Session::put('is_admin', $user->is_admin);
+                Session::put('role', $user->Role);
                 Session::put('name', $user->firstname . " " . $user->lastname);
 
                 // Redirect based on role
-                return ($user->role === 'admin') ? redirect('/admin/dashboard') : redirect('/');
+                return ($user->Role === 'admin') ? redirect('/admin/users') : redirect('/profile');
             } else {
                 return redirect('/pending');
             }
@@ -74,5 +75,21 @@ class UsersController extends Controller
         Auth::logout();
         Session::flush();
         return redirect('/login');
+    }
+
+
+    public function getAllUserPosts(){
+
+        $username = Session::get('username');
+
+        $articles = Article::where('username', $username)->get();
+
+        
+        $count = $articles->count();
+
+        $totalLikes = $articles->sum('likes');
+
+
+        return view('user/profile', compact('username', 'articles', 'count', 'totalLikes'));
     }
 }

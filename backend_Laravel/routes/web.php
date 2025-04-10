@@ -19,6 +19,66 @@ use App\Http\Controllers\api\UsersController;
 | be assigned to the "web" middleware group?
 |
 */
+require __DIR__.'/auth.php';
+
+
+Route::middleware('auth')->group(function () {
+
+    Route::get('/logout', [UsersController::class, 'logout'])->name('logout');
+
+
+    //! Route for creating post page functionality for posting as well.
+    Route::get('/createPost', function () {
+        return view('common/createPost');
+    })->name('createPost');
+    Route::get('/posts/create', [ArticleController::class, 'create'])->name('post_create');
+    Route::post('/posts', [ArticleController::class, 'store'])->name('posts_store');
+    
+    //! Route for pending page
+    Route::get('/pending', function () {
+        return view('common/pendingPage');
+    })->name('pending');
+    
+    
+    
+        //! Route for admin page
+    Route::get('/admin/users', [AdminController::class, 'userManagement'])->name('admin_users');
+    Route::patch('/admin/users/{id}/toggle-approval', [AdminController::class, 'toggleApproval'])
+        ->name('admin.users.toggle-approval');
+    
+    
+    //! Route for profile page
+    Route::get('/profile', [UsersController::class, 'getAllUserPosts'])->name('profile');
+   
+});
+
+
+
+
+
+
+
+
+
+
+Route::middleware('guest')->group(function () {
+//! Route for Login and signup page
+Route::get('/login', function () {
+    return view('common.login_signup');
+})->name('login');
+Route::get('/signup', function () {
+    return view('common.login_signup');
+})->name('signup');
+Route::post('/login', [UsersController::class, 'login'])->name('login.submit');
+Route::post('/signup', [UsersController::class, 'register'])->name('signup.submit');
+
+
+});
+
+
+
+
+
 
 //! Route for landing Page (Including react redirect routes).
 Route::get('/', function () {
@@ -31,25 +91,18 @@ Route::get('/ootd', function() {
     return redirect(config('app.react_url') . '/ootd');
 }) -> name('ootd');
 
-
-//! Route for Login and signup page
-Route::get('/login', function () {
-    return view('common/login_signup');
-})->name('login');
-Route::get('/signup', function () {
-    return view('common/login_signup');
-})->name('signup');
-Route::post('/login', [UsersController::class, 'login'])->name('login.submit');
-Route::post('/signup', [UsersController::class, 'register'])->name('signup.submit');
-Route::get('/logout', [UsersController::class, 'logout'])->name('logout');
+Route::get('/main', function() {
+    return redirect(config('app.react_url'));
+}) -> name('mainFrontEnd');
 
 
-//! Route for creating post page functionality for posting as well.
-Route::get('/createPost', function () {
-    return view('common/createPost');
-})->name('createPost');
-Route::get('/posts/create', [ArticleController::class, 'create'])->name('post_create');
-Route::post('/posts', [ArticleController::class, 'store'])->name('posts_store');
+
+
+
+Route::post('/posts/{id}/like', [ArticleController::class, 'like']);
+
+
+
 
 
 //! Route for sending post data to react
@@ -62,21 +115,12 @@ Route::prefix('ootd')->group(function () {
 Route::get('/articles', [ArticleController::class, 'index']);
 
 
-//! Route for pending page
-Route::get('/pending', function () {
-    return view('common/pendingPage');
-})->name('pending');
 
 
-//! Route for admin page
-Route::get('/admin/users', [AdminController::class, 'userManagement'])->name('admin_users');
-Route::patch('/admin/users/{id}/toggle-approval', [AdminController::class, 'toggleApproval'])
-    ->name('admin.users.toggle-approval');
 
-//! Route for profile page
-Route::get('/profile', function () {
-    return view('user/profile');
-})->name('profile');
+
+
+
 
 
 // AI Recommendation page
@@ -135,7 +179,6 @@ Route::get('/ai-recommendation/{id}', [AIRecommendationController::class, 'show'
 // });
 
 
-// require __DIR__.'/auth.php';
 
 // Route::post('/image', [ItemController::class, 'store'])->name("items.store");
 
