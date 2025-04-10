@@ -11,6 +11,7 @@
         <div class="landing-buttons">
             <a href="{{ route('discover') }}" class="btn btn-dark">DISCOVER</a>
             <a href="{{ route('ootd') }}" class="btn btn-dark">OOTD</a>
+            <a href="{{ route('login') }}" class="btn btn-dark">Login/Signup</a>
         </div>
     </div>
     <div class="landing-right">
