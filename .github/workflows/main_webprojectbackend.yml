@@ -38,7 +38,7 @@ jobs:
           APP_NAME=Lume
           APP_ENV=production
           APP_KEY=base64:IGtdSyUcU/95yJuLbsVO0FxpBddKAZSBknBkENVKI+g=
-          APP_DEBUG=true
+          APP_DEBUG=false
           APP_URL=https://webprojectbackend.azurewebsites.net
           DB_CONNECTION=sqlite
           DB_DATABASE=/home/site/wwwroot/database/database.db
@@ -98,17 +98,14 @@ jobs:
           slot-name: 'Production'
           package: .
 
-      - name: 'Fix database config'
-        uses: azure/CLI@v1
-        with:
-          inlineScript: |
-            az webapp ssh --name WebProjectBackEnd --resource-group Web_Project --command "sed -i 's/database => env(\"DB_DATABASE\", database_path(env(\"DB_DATABASE\")))/database => env(\"DB_DATABASE\")/' /home/site/wwwroot/config/database.php"
-
-      - name: 'Fix all permissions and run commands'
+      - name: 'Setup database and run migrations'
         uses: azure/CLI@v1
         with:
           inlineScript: |
             az webapp ssh --name WebProjectBackEnd --resource-group Web_Project --timeout 180 --port 2222 << EOF
+            # Fix database path in config
+            sed -i 's/database => env("DB_DATABASE", database_path(env("DB_DATABASE")))/database => env("DB_DATABASE")/' /home/site/wwwroot/config/database.php
+            
             # Create database directory and file
             mkdir -p /home/site/wwwroot/database
             touch /home/site/wwwroot/database/database.db
