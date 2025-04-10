@@ -2,7 +2,7 @@
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
 name: Build and deploy Laravel Backend to Azure Web App - WebProjectBackEnd
-
+ 
 on:
   push:
     branches:
@@ -32,14 +32,13 @@ jobs:
         run: |
           cd backend_Laravel
           composer install --no-dev --optimize-autoloader
-          
           # Create .env file directly instead of copying from .env.example
           cat > .env << 'EOL'
           APP_NAME=Lume
           APP_ENV=production
           APP_KEY=base64:IGtdSyUcU/95yJuLbsVO0FxpBddKAZSBknBkENVKI+g=
           APP_DEBUG=false
-          APP_URL=https://webprojectbackend.azurewebsites.net
+          APP_URL=https://webprojectbackend.azurewebsites.net/
           DB_CONNECTION=sqlite
           DB_DATABASE=/home/site/wwwroot/database/database.db
           LOG_CHANNEL=stack
@@ -50,7 +49,7 @@ jobs:
           SESSION_DRIVER=file
           SESSION_LIFETIME=120
           GITHUB_AI_KEY=${{ secrets.AI_API_KEY }}
-          CORS_ALLOWED_ORIGINS=*
+          CORS_ALLOWED_ORIGINS=https://webprojectfrontend.azurewebsites.net/
           EOL
 
       - name: Zip artifact for deployment
@@ -105,7 +104,7 @@ jobs:
             az webapp ssh --name WebProjectBackEnd --resource-group Web_Project --timeout 180 --port 2222 << EOF
             # Fix database path in config
             sed -i 's/database => env("DB_DATABASE", database_path(env("DB_DATABASE")))/database => env("DB_DATABASE")/' /home/site/wwwroot/config/database.php
-            
+
             # Create database directory and file
             mkdir -p /home/site/wwwroot/database
             touch /home/site/wwwroot/database/database.db
@@ -113,107 +112,20 @@ jobs:
             chmod 777 /home/site/wwwroot/database/database.db
             chmod -R 777 /home/site/wwwroot/storage
             chmod -R 777 /home/site/wwwroot/bootstrap/cache
-            
-            # Update CORS configuration
-            sed -i "s/'paths' => \['api\/\*', 'sanctum\/csrf-cookie'\]/'paths' => ['*']/" /home/site/wwwroot/config/cors.php
-            sed -i "s/'supports_credentials' => false/'supports_credentials' => true/" /home/site/wwwroot/config/cors.php
-            
-            # Create .htaccess with CORS headers as fallback
-            cat > /home/site/wwwroot/public/.htaccess.new << 'HTACCESS'
-            <IfModule mod_rewrite.c>
-                <IfModule mod_negotiation.c>
-                    Options -MultiViews -Indexes
-                </IfModule>
 
-                RewriteEngine On
-
-                # Handle Authorization Header
-                RewriteCond %{HTTP:Authorization} .
-                RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
-
-                # Handle X-XSRF-Token Header
-                RewriteCond %{HTTP:x-xsrf-token} .
-                RewriteRule .* - [E=HTTP_X_XSRF_TOKEN:%{HTTP:X-XSRF-Token}]
-
-                # Redirect Trailing Slashes If Not A Folder...
-                RewriteCond %{REQUEST_FILENAME} !-d
-                RewriteCond %{REQUEST_URI} (.+)/$
-                RewriteRule ^ %1 [L,R=301]
-
-                # Send Requests To Front Controller...
-                RewriteCond %{REQUEST_FILENAME} !-d
-                RewriteCond %{REQUEST_FILENAME} !-f
-                RewriteRule ^ index.php [L]
-            </IfModule>
-
-            # CORS Headers as fallback
-            <IfModule mod_headers.c>
-                Header always set Access-Control-Allow-Origin "https://webprojectfrontend.azurewebsites.net"
-                Header always set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
-                Header always set Access-Control-Allow-Headers "Origin, Content-Type, Accept, Authorization, X-Requested-With"
-                Header always set Access-Control-Allow-Credentials "true"
-                
-                # Handle preflight OPTIONS requests
-                RewriteEngine On
-                RewriteCond %{REQUEST_METHOD} OPTIONS
-                RewriteRule ^(.*)$ $1 [R=200,L]
-            </IfModule>
-            HTACCESS
-            
-            mv /home/site/wwwroot/public/.htaccess.new /home/site/wwwroot/public/.htaccess
-            
-            # Create web.config for IIS
-            cat > /home/site/wwwroot/web.config << 'WEBCONFIG'
-            <?xml version="1.0" encoding="UTF-8"?>
-            <configuration>
-              <system.webServer>
-                <rewrite>
-                  <rules>
-                    <rule name="Imported Rule 1" stopProcessing="true">
-                      <match url="^(.*)/$" ignoreCase="false" />
-                      <conditions>
-                        <add input="{REQUEST_FILENAME}" matchType="IsDirectory" ignoreCase="false" negate="true" />
-                      </conditions>
-                      <action type="Redirect" redirectType="Permanent" url="/{R:1}" />
-                    </rule>
-                    <rule name="Imported Rule 2" stopProcessing="true">
-                      <match url="^" ignoreCase="false" />
-                      <conditions>
-                        <add input="{REQUEST_FILENAME}" matchType="IsDirectory" ignoreCase="false" negate="true" />
-                        <add input="{REQUEST_FILENAME}" matchType="IsFile" ignoreCase="false" negate="true" />
-                      </conditions>
-                      <action type="Rewrite" url="index.php" />
-                    </rule>
-                  </rules>
-                </rewrite>
-                <httpProtocol>
-                  <customHeaders>
-                    <add name="Access-Control-Allow-Origin" value="https://webprojectfrontend.azurewebsites.net" />
-                    <add name="Access-Control-Allow-Headers" value="Origin, Content-Type, Accept, Authorization, X-Requested-With" />
-                    <add name="Access-Control-Allow-Methods" value="GET, POST, PUT, DELETE, OPTIONS" />
-                    <add name="Access-Control-Allow-Credentials" value="true" />
-                  </customHeaders>
-                </httpProtocol>
-              </system.webServer>
-            </configuration>
-            WEBCONFIG
-            
             # Set up Laravel
             cd /home/site/wwwroot
-            
-            # Create sessions table and run migrations
+
+            # Create necessary tables for Sessions
             php artisan session:table --force
+
+            # Run migrations for all tables
             php artisan migrate:fresh --force
-            
+
             # Create default user
-            php artisan tinker --execute="use App\\Models\\Users; Users::create(['username' => 'admin', 'email' => 'c@c.c', 'password' => bcrypt('P@\$\$w0rd'), 'Role' => 'admin', 'IsApproved' => true]);"
-            
-            # Set file session driver
-            sed -i "s/'driver' => env('SESSION_DRIVER', 'database')/'driver' => 'file'/" /home/site/wwwroot/config/session.php
-            
+            php artisan tinker --execute="use App\Models\Users; Users::create(['username' => 'admin', 'email' => 'c@c.c', 'password' => bcrypt('P@\$\$w0rd'), 'Role' => 'admin', 'IsApproved' => true]);"
+
             # Cache configuration
-            php artisan config:clear
             php artisan config:cache
-            php artisan route:clear
             php artisan route:cache
             EOF
