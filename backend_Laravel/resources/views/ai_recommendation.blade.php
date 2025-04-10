@@ -95,7 +95,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const recommendationId = { $id };
+            const recommendationId = {{ $id }};
             const loadingElement = document.querySelector('.loading');
             const contentElement = document.querySelector('.recommendation-content');
             const errorElement = document.querySelector('.error-message');

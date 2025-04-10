@@ -38,7 +38,7 @@ jobs:
           APP_NAME=Lume
           APP_ENV=production
           APP_KEY=base64:IGtdSyUcU/95yJuLbsVO0FxpBddKAZSBknBkENVKI+g=
-          APP_DEBUG=false
+          APP_DEBUG=true
           APP_URL=https://webprojectbackend.azurewebsites.net
           DB_CONNECTION=sqlite
           DB_DATABASE=/home/site/wwwroot/database/database.db
@@ -98,19 +98,38 @@ jobs:
           slot-name: 'Production'
           package: .
 
+      - name: 'Fix database config'
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az webapp ssh --name WebProjectBackEnd --resource-group Web_Project --command "sed -i 's/database => env(\"DB_DATABASE\", database_path(env(\"DB_DATABASE\")))/database => env(\"DB_DATABASE\")/' /home/site/wwwroot/config/database.php"
+
       - name: 'Fix all permissions and run commands'
         uses: azure/CLI@v1
         with:
           inlineScript: |
-            az webapp ssh --name WebProjectBackEnd --resource-group Web_Project --timeout 120 --port 2222 << EOF
-            chmod -R 777 /home/site/wwwroot/storage
-            chmod -R 777 /home/site/wwwroot/bootstrap/cache
+            az webapp ssh --name WebProjectBackEnd --resource-group Web_Project --timeout 180 --port 2222 << EOF
+            # Create database directory and file
             mkdir -p /home/site/wwwroot/database
             touch /home/site/wwwroot/database/database.db
             chmod 777 /home/site/wwwroot/database
             chmod 777 /home/site/wwwroot/database/database.db
+            chmod -R 777 /home/site/wwwroot/storage
+            chmod -R 777 /home/site/wwwroot/bootstrap/cache
+            
+            # Set up Laravel
             cd /home/site/wwwroot
-            php artisan migrate --force
+
+            # Create necessary tables for Sessions
+            php artisan session:table --force
+            
+            # Run migrations for all tables
+            php artisan migrate:fresh --force
+            
+            # Create default user
+            php artisan tinker --execute="use App\\Models\\Users; Users::create(['username' => 'admin', 'email' => 'c@c.c', 'password' => bcrypt('P@\$\$w0rd'), 'Role' => 'admin', 'IsApproved' => true]);"
+            
+            # Cache configuration
             php artisan config:cache
             php artisan route:cache
             EOF
