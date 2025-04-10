@@ -1,13 +1,12 @@
 import { Link } from "react-router-dom";
 import { API_BASE_URL } from "../config/index";
 
-const Navbar = () =>
-{
+const Navbar = () => {
     return (
         <nav className="navbar navbar-expand-lg bg-white shadow-sm px-4">
             <div className="container-fluid">
                 {/* Lume Logo */ }
-                <Link className="navbar-brand fw-bold fs-3" to={API_BASE_URL}>
+                <Link className="navbar-brand fw-bold fs-3" to="/">
                     lumé
                 </Link>
 
@@ -15,10 +14,10 @@ const Navbar = () =>
                 <div className="ms-auto">
                     <ul className="navbar-nav d-flex flex-row gap-4">
                         <li className="nav-item">
-                            <Link className="nav-link" to={`${API_BASE_URL}/signup`}>Register</Link>
+                            <a className="nav-link" href={`${API_BASE_URL}/signup`}>Register</a>
                         </li>
                         <li className="nav-item">
-                            <Link className="nav-link" to={`${API_BASE_URL}/login`}>Login</Link>
+                            <a className="nav-link" href={`${API_BASE_URL}/login`}>Login</a>
                         </li>
                     </ul>
                 </div>

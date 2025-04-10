@@ -13,7 +13,6 @@ use App\Http\Controllers\Controller;
 class UsersController extends Controller
 {   
 
-
     public function login(Request $request){
         $request->validate([
             'email' => 'required|email',
@@ -41,6 +40,45 @@ class UsersController extends Controller
         }
     }
 
+    /**
+     * Handle API login requests
+     */
+    public function apiLogin(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        // Retrieve user by email
+        $user = Users::where('email', $request->email)->first();
+
+        if ($user && Hash::check($request->password, $user->password)) {
+            if ($user->IsApproved) {
+                Auth::login($user);
+                
+                return response()->json([
+                    'success' => true,
+                    'user' => [
+                        'id' => $user->id,
+                        'username' => $user->username,
+                        'role' => $user->Role
+                    ],
+                    'redirect' => $user->Role === 'admin' ? '/admin/users' : '/profile'
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Your account is pending approval.'
+                ], 403);
+            }
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid email or password.'
+            ], 401);
+        }
+    }
 
     public function register(Request $request)
     {
@@ -70,13 +108,44 @@ class UsersController extends Controller
         return redirect()->route('pending')->with('success', 'Registration successful. Please wait for approval.');
     }
 
+    /**
+     * Handle API registration requests
+     */
+    public function apiRegister(Request $request)
+    {
+        $validated = $request->validate([
+            'username' => 'required|string|max:255|unique:users,username',
+            'email' => 'required|string|email|max:255|unique:users,email',
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'regex:/[A-Z]/',  
+                'regex:/[a-z]/',  
+                'regex:/[0-9]/', 
+                'regex:/[!@#$%^&*(),.?":{}|<>]/'
+            ]
+        ]);
+
+        $user = Users::create([
+            'username' => $validated['username'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'Role' => 'user',
+            'IsApproved' => false
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Registration successful. Please wait for approval.'
+        ], 201);
+    }
 
     public function logout(){
         Auth::logout();
         Session::flush();
         return redirect('/login');
     }
-
 
     public function getAllUserPosts(){
 

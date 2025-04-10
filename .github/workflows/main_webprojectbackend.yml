@@ -116,17 +116,20 @@ jobs:
             
             # Set up Laravel
             cd /home/site/wwwroot
-
-            # Create necessary tables for Sessions
-            php artisan session:table --force
             
-            # Run migrations for all tables
+            # Create sessions table and run migrations
+            php artisan session:table --force
             php artisan migrate:fresh --force
             
             # Create default user
             php artisan tinker --execute="use App\\Models\\Users; Users::create(['username' => 'admin', 'email' => 'c@c.c', 'password' => bcrypt('P@\$\$w0rd'), 'Role' => 'admin', 'IsApproved' => true]);"
             
+            # Set file session driver
+            sed -i "s/'driver' => env('SESSION_DRIVER', 'database')/'driver' => 'file'/" /home/site/wwwroot/config/session.php
+            
             # Cache configuration
+            php artisan config:clear
             php artisan config:cache
+            php artisan route:clear
             php artisan route:cache
             EOF

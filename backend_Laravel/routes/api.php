@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HMController;
 use App\Http\Controllers\FashionAnalysisController;
 use App\Http\Controllers\AIRecommendationController;
+use App\Http\Controllers\api\UsersController; // Fixed path
 
 // Basic test endpoint that should always work
 Route::get('/test', function() {
@@ -28,4 +29,6 @@ Route::get('/ai-debug', function() {
     return response()->json(['status' => 'API is working']);
 });
 
-Route::post('/analyze', [FashionAnalysisController::class, 'analyze']);
+// Authentication endpoints
+Route::post('/auth/login', [UsersController::class, 'apiLogin']);
+Route::post('/auth/register', [UsersController::class, 'apiRegister']);
