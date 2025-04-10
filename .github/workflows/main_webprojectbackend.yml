@@ -100,6 +100,12 @@ jobs:
           slot-name: 'Production'
           package: .
 
+      - name: 'Fix storage permissions'
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az webapp ssh --name WebProjectBackEnd --resource-group Web_Project --command "chmod -R 777 /home/site/wwwroot/storage"
+
       - name: 'Run Laravel post-deployment commands'
         run: |
           az webapp ssh --name WebProjectBackEnd --resource-group Web_Project --timeout 60 --port 2222 << EOF

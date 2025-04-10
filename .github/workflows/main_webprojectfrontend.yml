@@ -38,7 +38,7 @@ jobs:
           npm install
           npm run build
           
-          # Create web.config for SPA routing in Azure
+          # Create web.config for SPA routing
           cat > ./dist/web.config << 'EOL'
           <?xml version="1.0" encoding="utf-8"?>
           <configuration>
@@ -62,16 +62,14 @@ jobs:
                 <mimeMap fileExtension=".woff" mimeType="application/font-woff" />
                 <mimeMap fileExtension=".woff2" mimeType="application/font-woff2" />
               </staticContent>
-              <httpCompression>
-                <dynamicTypes>
-                  <add mimeType="application/json" enabled="true" />
-                </dynamicTypes>
-              </httpCompression>
             </system.webServer>
           </configuration>
           EOL
           
-          # Zip only the dist directory which contains the built app
+          # Create a 404.html for SPA fallback
+          echo '<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0;url=/"></head><body>Redirecting...</body></html>' > ./dist/404.html
+          
+          # Then zip the files
           cd dist
           zip -r ../../frontend-release.zip ./*
 
