@@ -41,7 +41,7 @@ jobs:
           APP_DEBUG=false
           APP_URL=https://webprojectbackend.azurewebsites.net
           DB_CONNECTION=sqlite
-          DB_DATABASE=/home/site/wwwroot/database/database.db
+          DB_DATABASE=/home/site/wwwroot/database.db
           LOG_CHANNEL=stack
           BROADCAST_DRIVER=log
           CACHE_DRIVER=file

@@ -188,6 +188,16 @@ Route::get('/ai-recommendation/{id}', [AIRecommendationController::class, 'show'
 //     return view('test-image');
 // });
 
+Route::get('/debug', function () {
+    return [
+        'database_exists' => file_exists(env('DB_DATABASE')),
+        'storage_writable' => is_writable(storage_path()),
+        'sessions_table_exists' => \Illuminate\Support\Facades\Schema::hasTable('sessions'),
+        'php_version' => phpversion(),
+        'laravel_version' => app()->version()
+    ];
+});
+
 
 
 
