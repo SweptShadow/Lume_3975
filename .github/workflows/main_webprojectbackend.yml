@@ -50,7 +50,7 @@ jobs:
           SESSION_DRIVER=file
           SESSION_LIFETIME=120
           GITHUB_AI_KEY=${{ secrets.AI_API_KEY }}
-          CORS_ALLOWED_ORIGINS=https://webprojectfrontend.azurewebsites.net
+          CORS_ALLOWED_ORIGINS=*
           EOL
 
       - name: Zip artifact for deployment
@@ -113,6 +113,90 @@ jobs:
             chmod 777 /home/site/wwwroot/database/database.db
             chmod -R 777 /home/site/wwwroot/storage
             chmod -R 777 /home/site/wwwroot/bootstrap/cache
+            
+            # Update CORS configuration
+            sed -i "s/'paths' => \['api\/\*', 'sanctum\/csrf-cookie'\]/'paths' => ['*']/" /home/site/wwwroot/config/cors.php
+            sed -i "s/'supports_credentials' => false/'supports_credentials' => true/" /home/site/wwwroot/config/cors.php
+            
+            # Create .htaccess with CORS headers as fallback
+            cat > /home/site/wwwroot/public/.htaccess.new << 'HTACCESS'
+            <IfModule mod_rewrite.c>
+                <IfModule mod_negotiation.c>
+                    Options -MultiViews -Indexes
+                </IfModule>
+
+                RewriteEngine On
+
+                # Handle Authorization Header
+                RewriteCond %{HTTP:Authorization} .
+                RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+                # Handle X-XSRF-Token Header
+                RewriteCond %{HTTP:x-xsrf-token} .
+                RewriteRule .* - [E=HTTP_X_XSRF_TOKEN:%{HTTP:X-XSRF-Token}]
+
+                # Redirect Trailing Slashes If Not A Folder...
+                RewriteCond %{REQUEST_FILENAME} !-d
+                RewriteCond %{REQUEST_URI} (.+)/$
+                RewriteRule ^ %1 [L,R=301]
+
+                # Send Requests To Front Controller...
+                RewriteCond %{REQUEST_FILENAME} !-d
+                RewriteCond %{REQUEST_FILENAME} !-f
+                RewriteRule ^ index.php [L]
+            </IfModule>
+
+            # CORS Headers as fallback
+            <IfModule mod_headers.c>
+                Header always set Access-Control-Allow-Origin "https://webprojectfrontend.azurewebsites.net"
+                Header always set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+                Header always set Access-Control-Allow-Headers "Origin, Content-Type, Accept, Authorization, X-Requested-With"
+                Header always set Access-Control-Allow-Credentials "true"
+                
+                # Handle preflight OPTIONS requests
+                RewriteEngine On
+                RewriteCond %{REQUEST_METHOD} OPTIONS
+                RewriteRule ^(.*)$ $1 [R=200,L]
+            </IfModule>
+            HTACCESS
+            
+            mv /home/site/wwwroot/public/.htaccess.new /home/site/wwwroot/public/.htaccess
+            
+            # Create web.config for IIS
+            cat > /home/site/wwwroot/web.config << 'WEBCONFIG'
+            <?xml version="1.0" encoding="UTF-8"?>
+            <configuration>
+              <system.webServer>
+                <rewrite>
+                  <rules>
+                    <rule name="Imported Rule 1" stopProcessing="true">
+                      <match url="^(.*)/$" ignoreCase="false" />
+                      <conditions>
+                        <add input="{REQUEST_FILENAME}" matchType="IsDirectory" ignoreCase="false" negate="true" />
+                      </conditions>
+                      <action type="Redirect" redirectType="Permanent" url="/{R:1}" />
+                    </rule>
+                    <rule name="Imported Rule 2" stopProcessing="true">
+                      <match url="^" ignoreCase="false" />
+                      <conditions>
+                        <add input="{REQUEST_FILENAME}" matchType="IsDirectory" ignoreCase="false" negate="true" />
+                        <add input="{REQUEST_FILENAME}" matchType="IsFile" ignoreCase="false" negate="true" />
+                      </conditions>
+                      <action type="Rewrite" url="index.php" />
+                    </rule>
+                  </rules>
+                </rewrite>
+                <httpProtocol>
+                  <customHeaders>
+                    <add name="Access-Control-Allow-Origin" value="https://webprojectfrontend.azurewebsites.net" />
+                    <add name="Access-Control-Allow-Headers" value="Origin, Content-Type, Accept, Authorization, X-Requested-With" />
+                    <add name="Access-Control-Allow-Methods" value="GET, POST, PUT, DELETE, OPTIONS" />
+                    <add name="Access-Control-Allow-Credentials" value="true" />
+                  </customHeaders>
+                </httpProtocol>
+              </system.webServer>
+            </configuration>
+            WEBCONFIG
             
             # Set up Laravel
             cd /home/site/wwwroot
